@@ -48,4 +48,29 @@ describe("User model", () => {
       });
     });
   });
+
+  it("throws an error if the username is not unique", (done) => {
+    const user1 = new User({
+      username: "someone",
+      email: "someone@example.com",
+      password: "password",
+      peeps: [],
+    });
+
+    const user2 = new User({
+      username: "someone",
+      email: "someoneelse@example.com",
+      password: "password",
+      peeps: [],
+    });
+
+    user1.save((err) => {
+      expect(err).toBeNull();
+
+      user2.save((err) => {
+        expect(err.toString()).toMatch(/MongoServerError/);
+        done();
+      });
+    });
+  });
 });
