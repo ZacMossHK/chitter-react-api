@@ -19,4 +19,12 @@ describe("Peep model", () => {
     expect(peep.body).toBe("hello world");
     expect(peep.createdAt).toEqual(new Date(2022, 10, 12));
   });
+
+  it("can list all peeps", (done) => {
+    Peep.find((err, peeps) => {
+      expect(err).toBeNull();
+      expect(peeps).toEqual([]);
+      done();
+    });
+  });
 });
