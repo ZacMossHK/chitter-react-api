@@ -7,6 +7,7 @@ describe("User model", () => {
       done();
     });
   });
+
   it("constructs", () => {
     const user = new User({
       username: "someone",
@@ -18,5 +19,13 @@ describe("User model", () => {
     expect(user.email).toBe("someone@example.com");
     expect(user.password).toBe("password");
     expect(user.peeps.length).toBe(0);
+  });
+
+  it("can list all users", (done) => {
+    User.find((err, users) => {
+      expect(err).toBeNull();
+      expect(users).toEqual([]);
+      done();
+    });
   });
 });
