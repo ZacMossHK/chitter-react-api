@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+const PeepSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   body: String,
   createdAt: Date,
 });
 
-const User = mongoose.model("User", UserSchema);
-User.createIndexes();
+const Peep = mongoose.model("Peep", PeepSchema);
+Peep.createIndexes();
 
-module.exports = User;
+module.exports = Peep;
