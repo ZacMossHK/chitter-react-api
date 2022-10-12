@@ -4,7 +4,6 @@ beforeAll(function (done) {
   mongoose.connect("mongodb://0.0.0.0/chitter_test", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
     autoIndex: true,
   });
   var db = mongoose.connection;
