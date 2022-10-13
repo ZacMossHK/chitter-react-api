@@ -1,5 +1,4 @@
-const getUser = require("../../controllers/session");
-
+import * as sessionController from "../../controllers/session";
 let res;
 
 describe("Session controller", () => {
@@ -7,7 +6,7 @@ describe("Session controller", () => {
     res = { send: jest.fn() };
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
-    getUser({ session: {} }, res);
+    sessionController.getUser({ session: {} }, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify({ user: null }));
   });
 
@@ -23,7 +22,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    getUser(req, res);
+    sessionController.getUser(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 
@@ -39,7 +38,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    getUser(req, res);
+    sessionController.getUser(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 
@@ -55,7 +54,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    getUser(req, res);
+    sessionController.getUser(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 });
