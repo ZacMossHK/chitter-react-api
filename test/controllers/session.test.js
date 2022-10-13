@@ -7,7 +7,7 @@ describe("Session controller", () => {
     res = { send: jest.fn() };
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
-    getUser({}, res);
+    getUser({ session: {} }, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify({ user: null }));
   });
 

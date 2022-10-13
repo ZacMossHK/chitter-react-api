@@ -1,6 +1,6 @@
 getUser = (req, res) => {
-  if (!req.session) return res.send(JSON.stringify({ user: null }));
-  res.send(JSON.stringify({ user: req.session.user }));
+  const result = req.session.user ? req.session.user : null;
+  res.send(JSON.stringify({ user: result }));
 };
 
 module.exports = getUser;
