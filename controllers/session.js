@@ -4,3 +4,5 @@ exports.index = (req, res) => {
     result = { _id: req.session.user._id, username: req.session.user.username };
   res.send(JSON.stringify({ user: result }));
 };
+
+exports.create = () => {};

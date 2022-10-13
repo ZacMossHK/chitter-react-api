@@ -11,17 +11,16 @@ describe("Session controller", () => {
   });
 
   it("getUser returns a user object if session exists", () => {
-    const sessionObj = {
-      user: {
-        _id: 0,
-        username: "someone",
-        email: "someoneelse",
-        password: "password",
-        peeps: [],
-      },
-    };
     const req = {
-      session: sessionObj,
+      session: {
+        user: {
+          _id: 0,
+          username: "someone",
+          email: "someoneelse",
+          password: "password",
+          peeps: [],
+        },
+      },
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
@@ -30,17 +29,16 @@ describe("Session controller", () => {
   });
 
   it("getUser returns a user object if session user exists", () => {
-    const sessionObj = {
-      user: {
-        _id: 1,
-        username: "one",
-        email: "two",
-        password: "password",
-        peeps: [],
-      },
-    };
     const req = {
-      session: sessionObj,
+      session: {
+        user: {
+          _id: 1,
+          username: "one",
+          email: "two",
+          password: "password",
+          peeps: [],
+        },
+      },
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
@@ -49,21 +47,22 @@ describe("Session controller", () => {
   });
 
   it("getUser returns a user object if session user exists", () => {
-    const sessionObj = {
-      user: {
-        _id: 2,
-        username: "red",
-        email: "blue",
-        password: "password",
-        peeps: [],
-      },
-    };
     const req = {
-      session: sessionObj,
+      session: {
+        user: {
+          _id: 2,
+          username: "red",
+          email: "blue",
+          password: "password",
+          peeps: [],
+        },
+      },
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
       JSON.stringify({ user: { _id: 2, username: "red" } })
     );
   });
+
+  // it("create logs in a user if their password matches", () => {});
 });
