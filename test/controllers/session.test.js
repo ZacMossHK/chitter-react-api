@@ -27,11 +27,27 @@ describe("Session controller", () => {
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 
-  it("getUser returns a user object if session exists", () => {
+  it("getUser returns a user object if session user exists", () => {
     const sessionObj = {
       user: {
         username: "one",
         email: "two",
+        password: "password",
+        peeps: [],
+      },
+    };
+    const req = {
+      session: sessionObj,
+    };
+    getUser(req, res);
+    expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
+  });
+
+  it("getUser returns a user object if session user exists", () => {
+    const sessionObj = {
+      user: {
+        username: "red",
+        email: "blue",
         password: "password",
         peeps: [],
       },

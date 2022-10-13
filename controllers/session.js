@@ -1,5 +1,16 @@
 getUser = (req, res) => {
   if (!req.session) return res.send(JSON.stringify({ user: null }));
+  if (req.session.user.username === "red")
+    return res.send(
+      JSON.stringify({
+        user: {
+          username: "red",
+          email: "blue",
+          password: "password",
+          peeps: [],
+        },
+      })
+    );
   if (req.session.user.username === "one")
     return res.send(
       JSON.stringify({
