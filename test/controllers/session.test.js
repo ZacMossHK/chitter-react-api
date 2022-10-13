@@ -133,7 +133,7 @@ describe("Session controller", () => {
       session: { user: "object" },
       cookies: { user_sid: "0lkj243" },
     };
-    sessionController.delete(req, res);
+    sessionController.destroy(req, res);
     expect(res.clearCookie).toHaveBeenCalledWith("user_sid");
   });
 });
