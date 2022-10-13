@@ -112,4 +112,19 @@ describe("Session controller", () => {
     expect(getEncryptedPassword).toHaveBeenCalledWith("otherpassword");
     expect(res.status).toHaveBeenCalledWith(401);
   });
+
+  it("create sends a 501 status if username is wrong", () => {
+    const req = {
+      session: {},
+      body: { username: "username", password: "password" },
+    };
+    const mockUser = {
+      findOne: jest.fn((query, callback) => callback("Error")),
+    };
+    const getEncryptedPassword = jest.fn();
+    getEncryptedPassword.mockReturnValueOnce("108l34jk");
+    sessionController.create(req, res, getEncryptedPassword, mockUser);
+    expect(getEncryptedPassword).toHaveBeenCalledWith("password");
+    expect(res.status).toHaveBeenCalledWith(401);
+  });
 });
