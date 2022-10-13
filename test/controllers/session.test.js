@@ -113,7 +113,7 @@ describe("Session controller", () => {
     expect(res.status).toHaveBeenCalledWith(401);
   });
 
-  it("create sends a 501 status if username is wrong", () => {
+  it("create sends a 401 status if username doesn't exist", () => {
     const req = {
       session: {},
       body: { username: "username", password: "password" },
