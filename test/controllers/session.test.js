@@ -136,4 +136,13 @@ describe("Session controller", () => {
     sessionController.destroy(req, res);
     expect(res.clearCookie).toHaveBeenCalledWith("user_sid");
   });
+
+  it("destroy doesn't do anything if user_sid doesn't exist", () => {
+    const req = {
+      session: { user: "object" },
+      cookies: {},
+    };
+    sessionController.destroy(req, res);
+    expect(res.clearCookie).not.toHaveBeenCalled();
+  });
 });
