@@ -2,11 +2,11 @@ import * as sessionController from "../../controllers/session";
 let res;
 
 describe("Session controller", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     res = { send: jest.fn() };
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
-    sessionController.getUser({ session: {} }, res);
+    sessionController.index({ session: {} }, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify({ user: null }));
   });
 
@@ -22,7 +22,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    sessionController.getUser(req, res);
+    sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 
@@ -38,7 +38,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    sessionController.getUser(req, res);
+    sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 
@@ -54,7 +54,7 @@ describe("Session controller", () => {
     const req = {
       session: sessionObj,
     };
-    sessionController.getUser(req, res);
+    sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(JSON.stringify(sessionObj));
   });
 });
