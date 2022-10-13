@@ -137,10 +137,19 @@ describe("Session controller", () => {
     expect(res.clearCookie).toHaveBeenCalledWith("user_sid");
   });
 
-  it("destroy doesn't do anything if user_sid doesn't exist", () => {
+  it("destroy doesn't do anything if user_sid doesn't exist and session does", () => {
     const req = {
       session: { user: "object" },
       cookies: {},
+    };
+    sessionController.destroy(req, res);
+    expect(res.clearCookie).not.toHaveBeenCalled();
+  });
+
+  it("destroy doesn't do anything if session.user doesn't exist but user_sid does", () => {
+    const req = {
+      session: {},
+      cookies: { user_sid: "0lkj243" },
     };
     sessionController.destroy(req, res);
     expect(res.clearCookie).not.toHaveBeenCalled();
