@@ -1,37 +1,6 @@
 getUser = (req, res) => {
   if (!req.session) return res.send(JSON.stringify({ user: null }));
-  if (req.session.user.username === "red")
-    return res.send(
-      JSON.stringify({
-        user: {
-          username: "red",
-          email: "blue",
-          password: "password",
-          peeps: [],
-        },
-      })
-    );
-  if (req.session.user.username === "one")
-    return res.send(
-      JSON.stringify({
-        user: {
-          username: "one",
-          email: "two",
-          password: "password",
-          peeps: [],
-        },
-      })
-    );
-  res.send(
-    JSON.stringify({
-      user: {
-        username: "someone",
-        email: "someoneelse",
-        password: "password",
-        peeps: [],
-      },
-    })
-  );
+  res.send(JSON.stringify({ user: req.session.user }));
 };
 
 module.exports = getUser;
