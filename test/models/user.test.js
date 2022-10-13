@@ -98,4 +98,12 @@ describe("User model", () => {
       });
     });
   });
+
+  it("throws an error if the user doesn't exist", (done) => {
+    expect.assertions(1);
+    User.findOne({ _id: "id" }, (err, user) => {
+      expect(err.toString()).toMatch(/CastError:/);
+      done();
+    });
+  });
 });

@@ -1,20 +1,13 @@
 import * as sessionController from "../../controllers/session";
 const User = require("../../models/user");
 require("../mongodb_helper");
-let res, userId;
+let res;
 
 describe("Session controller", () => {
   beforeEach((done) => {
     res = { send: jest.fn() };
     User.deleteMany(() => {
-      new User({
-        username: "username",
-        password: "password",
-        email: "email",
-      }).save((err, user) => {
-        user._id = userId;
-        done();
-      });
+      done();
     });
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
@@ -76,17 +69,26 @@ describe("Session controller", () => {
     );
   });
 
-  it("create logs in a user if their password matches", () => {
+  it("create logs in if user exists and their password matches", () => {
     const req = {
       session: {},
-      body: JSON.stringify({ username: "username", password: "108l34jk" }),
+      body: { username: "username", password: "password" },
     };
-    const decryptPassword = jest.fn();
-    decryptPassword.mockReturnValueOnce("password");
-    sessionController.create(req, res, decryptPassword);
-    expect(decryptPassword).toHaveBeenCalledWith("108l34jk");
+    const mockUser = {
+      findOne: jest.fn((query, callback) =>
+        callback(null, {
+          _id: "id",
+          username: "username",
+          password: "password",
+        })
+      ),
+    };
+    const getEncryptedPassword = jest.fn();
+    getEncryptedPassword.mockReturnValueOnce("108l34jk");
+    sessionController.create(req, res, getEncryptedPassword, mockUser);
+    expect(getEncryptedPassword).toHaveBeenCalledWith("password");
     expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: userId, username: "username" })
+      JSON.stringify({ _id: "id", username: "username" })
     );
   });
 });

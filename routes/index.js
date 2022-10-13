@@ -1,10 +1,7 @@
 var express = require("express");
 var router = express.Router();
-
+const sessionController = require("../controllers/session");
 /* GET home page. */
-router.get("/", function (req, res, next) {
-  // res.render('index', { title: 'Express' });
-  res.send("This works in React!");
-});
+router.get("/", sessionController.create);
 
 module.exports = router;
