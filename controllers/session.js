@@ -5,4 +5,4 @@ exports.index = (req, res) => {
   res.send(JSON.stringify({ user: result }));
 };
 
-exports.create = () => {};
+exports.create = (req, res, decryptPassword) => {};

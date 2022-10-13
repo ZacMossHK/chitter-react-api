@@ -1,9 +1,21 @@
 import * as sessionController from "../../controllers/session";
-let res;
+const User = require("../../models/user");
+require("../mongodb_helper");
+let res, userId;
 
 describe("Session controller", () => {
-  beforeEach(() => {
+  beforeEach((done) => {
     res = { send: jest.fn() };
+    User.deleteMany(() => {
+      new User({
+        username: "username",
+        password: "password",
+        email: "email",
+      }).save((err, user) => {
+        user._id = userId;
+        done();
+      });
+    });
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
     sessionController.index({ session: {} }, res);
@@ -69,5 +81,12 @@ describe("Session controller", () => {
       session: {},
       body: JSON.stringify({ username: "username", password: "108l34jk" }),
     };
+    const decryptPassword = jest.fn();
+    decryptPassword.mockReturnValueOnce("password");
+    sessionController.create(req, res, decryptPassword);
+    expect(decryptPassword).toHaveBeenCalledWith("108l34jk");
+    expect(res.send).toHaveBeenCalledWith(
+      JSON.stringify({ _id: userId, username: "username" })
+    );
   });
 });
