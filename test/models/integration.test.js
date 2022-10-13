@@ -58,7 +58,6 @@ describe("Model integration", () => {
       createdAt: new Date(2022, 10, 12),
     }).save((err, peep) => {
       expect(err).toBeNull();
-      console.log(peep);
       peepId = peep._id;
       new User({
         username: "username",
