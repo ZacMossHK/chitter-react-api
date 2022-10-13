@@ -64,5 +64,10 @@ describe("Session controller", () => {
     );
   });
 
-  // it("create logs in a user if their password matches", () => {});
+  it("create logs in a user if their password matches", () => {
+    const req = {
+      session: {},
+      body: JSON.stringify({ username: "username", password: "108l34jk" }),
+    };
+  });
 });
