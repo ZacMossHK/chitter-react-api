@@ -7,9 +7,10 @@ exports.index = (req, res) => {
   res.send(JSON.stringify({ user: result }));
 };
 
-exports.create = (req, res, getEncryptedPassword, user = User) => {
+exports.create = (req, res, getEncryptedPassword, userModel = User) => {
   const encryptedPassword = getEncryptedPassword(req.body.password);
-  user.findOne({ username: req.body.username }, (err, user) => {
+  userModel.findOne({ username: req.body.username }, (err, user) => {
+    if (encryptedPassword !== user.password) return res.status(401);
     res.send(JSON.stringify({ _id: user._id, username: user.username }));
   });
 };

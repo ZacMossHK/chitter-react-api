@@ -5,7 +5,7 @@ let res;
 
 describe("Session controller", () => {
   beforeEach((done) => {
-    res = { send: jest.fn() };
+    res = { send: jest.fn(), status: jest.fn() };
     User.deleteMany(() => {
       done();
     });
@@ -79,7 +79,7 @@ describe("Session controller", () => {
         callback(null, {
           _id: "id",
           username: "username",
-          password: "password",
+          password: "108l34jk",
         })
       ),
     };
@@ -90,5 +90,26 @@ describe("Session controller", () => {
     expect(res.send).toHaveBeenCalledWith(
       JSON.stringify({ _id: "id", username: "username" })
     );
+  });
+
+  it("create sends a 501 status if password is wrong", () => {
+    const req = {
+      session: {},
+      body: { username: "username", password: "otherpassword" },
+    };
+    const mockUser = {
+      findOne: jest.fn((query, callback) =>
+        callback(null, {
+          _id: "id",
+          username: "username",
+          password: "108l34jk",
+        })
+      ),
+    };
+    const getEncryptedPassword = jest.fn();
+    getEncryptedPassword.mockReturnValueOnce("1oi1234kj");
+    sessionController.create(req, res, getEncryptedPassword, mockUser);
+    expect(getEncryptedPassword).toHaveBeenCalledWith("otherpassword");
+    expect(res.status).toHaveBeenCalledWith(401);
   });
 });
