@@ -5,7 +5,7 @@ let res;
 
 describe("Session controller", () => {
   beforeEach((done) => {
-    res = { send: jest.fn(), status: jest.fn() };
+    res = { send: jest.fn(), status: jest.fn(), clearCookie: jest.fn() };
     User.deleteMany(() => {
       done();
     });
@@ -126,5 +126,14 @@ describe("Session controller", () => {
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("password");
     expect(res.status).toHaveBeenCalledWith(401);
+  });
+
+  it("destroy logs the user out", () => {
+    const req = {
+      session: { user: "object" },
+      cookies: { user_sid: "0lkj243" },
+    };
+    sessionController.delete(req, res);
+    expect(res.clearCookie).toHaveBeenCalledWith("user_sid");
   });
 });

@@ -14,3 +14,7 @@ exports.create = (req, res, getEncryptedPassword, userModel = User) => {
     res.send(JSON.stringify({ _id: user._id, username: user.username }));
   });
 };
+
+exports.delete = (req, res) => {
+  res.clearCookie("user_sid");
+};
