@@ -32,6 +32,7 @@ describe("Model integration", () => {
           userId: users[0]._id,
           body: "hello world",
           createdAt: new Date(2022, 10, 12),
+          likes: [],
         }).save((err) => {
           expect(err).toBeNull();
 
@@ -56,6 +57,7 @@ describe("Model integration", () => {
       userId: new mongoose.Types.ObjectId(),
       body: "hello world",
       createdAt: new Date(2022, 10, 12),
+      likes: [],
     }).save((err, peep) => {
       expect(err).toBeNull();
       peepId = peep._id;

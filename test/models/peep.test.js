@@ -16,6 +16,7 @@ describe("Peep model", () => {
       userId: mockObjectId,
       body: "hello world",
       createdAt: new Date(2022, 10, 12),
+      likes: [],
     });
 
     expect(peep.userId).toEqual(mockObjectId);
@@ -38,6 +39,7 @@ describe("Peep model", () => {
       userId: mockObjectId,
       body: "hello world",
       createdAt: new Date(2022, 10, 12),
+      likes: [],
     });
 
     peep.save((err) => {

@@ -19,5 +19,8 @@ exports.create = (req, res, getEncryptedPassword, userModel = User) => {
 };
 
 exports.destroy = (req, res) => {
-  if (req.session.user && req.cookies.user_sid) res.clearCookie("user_sid");
+  if (req.session.user && req.cookies.user_sid) {
+    res.clearCookie("user_sid");
+    res.sendStatus(204);
+  }
 };
