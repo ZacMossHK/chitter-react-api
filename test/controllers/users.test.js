@@ -71,9 +71,9 @@ describe("Users controller", () => {
       session: {},
       body: {
         user: {
-          username: "user%£$!",
+          username: "username",
           password: "password",
-          email: "email@email.com",
+          email: "ema%%%%%il@e^^^^mail.com",
         },
       },
     };
@@ -81,8 +81,7 @@ describe("Users controller", () => {
     const mockUser = jest.fn().mockImplementation(() => {});
 
     usersController.create(req, res, mockGetEncryptedPassword, mockUser);
-    expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
     expect(res.status).toHaveBeenCalledWith(403);
-    expect(res.json).toHaveBeenCalledWith({ invalidCharsUsername: true });
+    expect(res.json).toHaveBeenCalledWith({ invalidCharsEmail: true });
   });
 });
