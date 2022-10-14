@@ -1,6 +1,6 @@
 import * as usersController from "../../controllers/users";
 
-let res;
+let res, mockGetEncryptedPassword;
 
 describe("Users controller", () => {
   beforeEach(() => {
@@ -9,6 +9,7 @@ describe("Users controller", () => {
       status: jest.fn().mockReturnThis(),
       sendStatus: jest.fn(),
     };
+    mockGetEncryptedPassword = jest.fn(() => "khj234jl08");
   });
 
   it("create creates a new user", () => {
@@ -22,13 +23,14 @@ describe("Users controller", () => {
           callback(null, {
             _id: 1,
             username: "username",
-            password: "password",
+            password: "khj234jl08",
             email: "email",
           })
         ),
       };
     });
-    usersController.create(req, res, mockUser);
+    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
     expect(mockUser).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
@@ -45,7 +47,8 @@ describe("Users controller", () => {
         save: jest.fn((callback) => callback(new Error("MongoServerError"))),
       };
     });
-    usersController.create(req, res, mockUser);
+    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
     expect(mockUser).toHaveBeenCalled();
     expect(res.sendStatus).toHaveBeenCalledWith(401);
   });
