@@ -5,14 +5,19 @@ let res;
 
 describe("Session controller", () => {
   beforeEach((done) => {
-    res = { send: jest.fn(), status: jest.fn(), clearCookie: jest.fn() };
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      sendStatus: jest.fn(),
+      clearCookie: jest.fn(),
+    };
     User.deleteMany(() => {
       done();
     });
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
     sessionController.index({ session: {} }, res);
-    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
   });
 
   it("getUser returns a user object if session exists", () => {
@@ -28,9 +33,7 @@ describe("Session controller", () => {
       },
     };
     sessionController.index(req, res);
-    expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: 0, username: "someone" })
-    );
+    expect(res.json).toHaveBeenCalledWith({ _id: 0, username: "someone" });
   });
 
   it("getUser returns a user object if session user exists", () => {
@@ -46,9 +49,7 @@ describe("Session controller", () => {
       },
     };
     sessionController.index(req, res);
-    expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: 1, username: "one" })
-    );
+    expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "one" });
   });
 
   it("getUser returns a user object if session user exists", () => {
@@ -64,9 +65,7 @@ describe("Session controller", () => {
       },
     };
     sessionController.index(req, res);
-    expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: 2, username: "red" })
-    );
+    expect(res.json).toHaveBeenCalledWith({ _id: 2, username: "red" });
   });
 
   it("create logs in if user exists and their password matches", () => {
@@ -87,12 +86,11 @@ describe("Session controller", () => {
     getEncryptedPassword.mockReturnValueOnce("108l34jk");
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("password");
-    expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: "id", username: "username" })
-    );
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ _id: "id", username: "username" });
   });
 
-  it("create sends a 501 status if password is wrong", () => {
+  it("create sends a 401 status if password is wrong", () => {
     const req = {
       session: {},
       body: { username: "username", password: "otherpassword" },
@@ -110,7 +108,7 @@ describe("Session controller", () => {
     getEncryptedPassword.mockReturnValueOnce("1oi1234kj");
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("otherpassword");
-    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(401);
   });
 
   it("create sends a 401 status if username doesn't exist", () => {
@@ -125,7 +123,7 @@ describe("Session controller", () => {
     getEncryptedPassword.mockReturnValueOnce("108l34jk");
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("password");
-    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(401);
   });
 
   it("destroy logs the user out", () => {
