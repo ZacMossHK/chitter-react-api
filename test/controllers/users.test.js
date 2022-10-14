@@ -4,7 +4,11 @@ let res;
 
 describe("Users controller", () => {
   beforeEach(() => {
-    res = { send: jest.fn(), status: jest.fn() };
+    res = {
+      json: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+      sendStatus: jest.fn(),
+    };
   });
 
   it("create creates a new user", () => {
@@ -26,9 +30,8 @@ describe("Users controller", () => {
     });
     usersController.create(req, res, mockUser);
     expect(mockUser).toHaveBeenCalled();
-    expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ _id: 1, username: "username" })
-    );
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
   });
 
   it("create sends a 401 status if the username or email already exist", () => {
@@ -44,6 +47,6 @@ describe("Users controller", () => {
     });
     usersController.create(req, res, mockUser);
     expect(mockUser).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(401);
   });
 });
