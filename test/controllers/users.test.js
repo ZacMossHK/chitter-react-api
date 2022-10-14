@@ -66,7 +66,26 @@ describe("Users controller", () => {
     expect(res.sendStatus).toHaveBeenCalledWith(401);
   });
 
-  it("create sends a 403 status and object if username has special characters", () => {
+  it("create sends a 403 status and object if email has invalid characters", () => {
+    const req = {
+      session: {},
+      body: {
+        user: {
+          username: "username^^!!!£$%",
+          password: "password",
+          email: "email@email.com",
+        },
+      },
+    };
+
+    const mockUser = jest.fn().mockImplementation(() => {});
+
+    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ invalidCharsUsername: true });
+  });
+
+  it("create sends a 403 status and object if email has invalid characters", () => {
     const req = {
       session: {},
       body: {
@@ -83,5 +102,27 @@ describe("Users controller", () => {
     usersController.create(req, res, mockGetEncryptedPassword, mockUser);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ invalidCharsEmail: true });
+  });
+
+  it("create sends a 403 status and object if both username and email have invalid characters", () => {
+    const req = {
+      session: {},
+      body: {
+        user: {
+          username: "username^^^^&&",
+          password: "password",
+          email: "ema%%%%%il@e^^^^mail.com",
+        },
+      },
+    };
+
+    const mockUser = jest.fn().mockImplementation(() => {});
+
+    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({
+      invalidCharsUsername: true,
+      invalidCharsEmail: true,
+    });
   });
 });
