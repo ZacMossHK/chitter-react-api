@@ -42,7 +42,7 @@ describe("Users controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
   });
 
-  it("create sends a 401 status if the username or email already exist", () => {
+  it("create sends a 400 status if the username or email already exist", () => {
     const req = {
       session: {},
       body: {
@@ -63,10 +63,10 @@ describe("Users controller", () => {
     usersController.create(req, res, mockGetEncryptedPassword, mockUser);
     expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
     expect(mockUser).toHaveBeenCalled();
-    expect(res.sendStatus).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(400);
   });
 
-  it("create sends a 403 status and object if email has invalid characters", () => {
+  it("create sends a 400 status and object if email has invalid characters", () => {
     const req = {
       session: {},
       body: {
@@ -79,11 +79,11 @@ describe("Users controller", () => {
     };
 
     usersController.create(req, res);
-    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ invalidCharsUsername: true });
   });
 
-  it("create sends a 403 status and object if email has invalid characters", () => {
+  it("create sends a 400 status and object if email has invalid characters", () => {
     const req = {
       session: {},
       body: {
@@ -96,11 +96,11 @@ describe("Users controller", () => {
     };
 
     usersController.create(req, res);
-    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ invalidCharsEmail: true });
   });
 
-  it("create sends a 403 status and object if both username and email have invalid characters", () => {
+  it("create sends a 400 status and object if both username and email have invalid characters", () => {
     const req = {
       session: {},
       body: {
@@ -113,7 +113,7 @@ describe("Users controller", () => {
     };
 
     usersController.create(req, res);
-    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       invalidCharsUsername: true,
       invalidCharsEmail: true,

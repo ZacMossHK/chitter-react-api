@@ -3,7 +3,7 @@ exports.create = (req, res, getEncryptedPassword, userModel) => {
     req.body.user.password = getEncryptedPassword(req.body.user.password);
     new userModel(req.body.user).save((err, user) => {
       if (err && err.toString().includes("MongoServerError"))
-        return res.sendStatus(401);
+        return res.sendStatus(400);
       res.status(201).json({ _id: user._id, username: user.username });
     });
   }
@@ -18,6 +18,6 @@ const validateFields = (req, res) => {
   if (!req.body.user.email.match(emailRegex))
     invalidEmailObj = { invalidCharsEmail: true };
   if (invalidUsernameObj || invalidEmailObj)
-    return res.status(403).json({ ...invalidUsernameObj, ...invalidEmailObj });
+    return res.status(400).json({ ...invalidUsernameObj, ...invalidEmailObj });
   return true;
 };
