@@ -78,9 +78,7 @@ describe("Users controller", () => {
       },
     };
 
-    const mockUser = jest.fn().mockImplementation(() => {});
-
-    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    usersController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ invalidCharsUsername: true });
   });
@@ -97,9 +95,7 @@ describe("Users controller", () => {
       },
     };
 
-    const mockUser = jest.fn().mockImplementation(() => {});
-
-    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    usersController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({ invalidCharsEmail: true });
   });
@@ -116,9 +112,7 @@ describe("Users controller", () => {
       },
     };
 
-    const mockUser = jest.fn().mockImplementation(() => {});
-
-    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    usersController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(403);
     expect(res.json).toHaveBeenCalledWith({
       invalidCharsUsername: true,
