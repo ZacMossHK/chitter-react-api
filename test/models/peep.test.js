@@ -54,4 +54,30 @@ describe("Peep model", () => {
       });
     });
   });
+
+  it("can call multiple peeps in reverse chronological order", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be last",
+      createdAt: new Date(2022, 10, 11),
+    }).save();
+
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be first",
+      createdAt: new Date(2022, 10, 13),
+    }).save();
+
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be in the middle",
+      createdAt: new Date(2022, 10, 12),
+    }).save();
+
+    const users = await Peep.find().sort({ createdAt: -1 });
+    expect(users[0].body).toBe("this should be first");
+    expect(users[1].body).toBe("this should be in the middle");
+    expect(users[2].body).toBe("this should be last");
+  });
 });
