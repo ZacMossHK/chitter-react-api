@@ -12,7 +12,7 @@ describe("Session controller", () => {
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
     sessionController.index({ session: {} }, res);
-    expect(res.send).toHaveBeenCalledWith(JSON.stringify({ user: null }));
+    expect(res.status).toHaveBeenCalledWith(204);
   });
 
   it("getUser returns a user object if session exists", () => {
@@ -29,7 +29,7 @@ describe("Session controller", () => {
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ user: { _id: 0, username: "someone" } })
+      JSON.stringify({ _id: 0, username: "someone" })
     );
   });
 
@@ -47,7 +47,7 @@ describe("Session controller", () => {
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ user: { _id: 1, username: "one" } })
+      JSON.stringify({ _id: 1, username: "one" })
     );
   });
 
@@ -65,7 +65,7 @@ describe("Session controller", () => {
     };
     sessionController.index(req, res);
     expect(res.send).toHaveBeenCalledWith(
-      JSON.stringify({ user: { _id: 2, username: "red" } })
+      JSON.stringify({ _id: 2, username: "red" })
     );
   });
 
