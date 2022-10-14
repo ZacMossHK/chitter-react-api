@@ -1,5 +1,6 @@
 const User = require("../models/user");
 
+// do we need this?
 exports.index = (req, res) => {
   if (req.session.user)
     return res.json({
@@ -10,9 +11,9 @@ exports.index = (req, res) => {
 };
 
 exports.create = (req, res, getEncryptedPassword, userModel = User) => {
-  const encryptedPassword = getEncryptedPassword(req.body.password);
-  userModel.findOne({ username: req.body.username }, (err, user) => {
-    if (err || encryptedPassword !== user.password) return res.sendStatus(401);
+  const encryptedPassword = getEncryptedPassword(req.body.session.password);
+  userModel.findOne({ username: req.body.session.username }, (err, user) => {
+    if (err || encryptedPassword !== user.password) return res.sendStatus(403);
     res.status(201).json({ _id: user._id, username: user.username });
   });
 };

@@ -71,7 +71,7 @@ describe("Session controller", () => {
   it("create logs in if user exists and their password matches", () => {
     const req = {
       session: {},
-      body: { username: "username", password: "password" },
+      body: { session: { username: "username", password: "password" } },
     };
     const mockUser = {
       findOne: jest.fn((query, callback) =>
@@ -90,10 +90,10 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: "id", username: "username" });
   });
 
-  it("create sends a 401 status if password is wrong", () => {
+  it("create sends a 403 status if password is wrong", () => {
     const req = {
       session: {},
-      body: { username: "username", password: "otherpassword" },
+      body: { session: { username: "username", password: "otherpassword" } },
     };
     const mockUser = {
       findOne: jest.fn((query, callback) =>
@@ -108,13 +108,13 @@ describe("Session controller", () => {
     getEncryptedPassword.mockReturnValueOnce("1oi1234kj");
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("otherpassword");
-    expect(res.sendStatus).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
-  it("create sends a 401 status if username doesn't exist", () => {
+  it("create sends a 403 status if username doesn't exist", () => {
     const req = {
       session: {},
-      body: { username: "username", password: "password" },
+      body: { session: { username: "username", password: "password" } },
     };
     const mockUser = {
       findOne: jest.fn((query, callback) => callback("Error")),
@@ -123,7 +123,7 @@ describe("Session controller", () => {
     getEncryptedPassword.mockReturnValueOnce("108l34jk");
     sessionController.create(req, res, getEncryptedPassword, mockUser);
     expect(getEncryptedPassword).toHaveBeenCalledWith("password");
-    expect(res.sendStatus).toHaveBeenCalledWith(401);
+    expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
   it("destroy logs the user out", () => {
