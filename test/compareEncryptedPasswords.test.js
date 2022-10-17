@@ -1,5 +1,6 @@
 import compareEncryptedPasswords from "../public/javascripts/compareEncryptedPasswords";
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
+import bcrypt from "bcrypt";
 jest.mock("bcrypt");
 const bcryptCompare = bcrypt.compare;
 

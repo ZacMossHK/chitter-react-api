@@ -1,4 +1,8 @@
 import * as usersController from "../../controllers/users";
+import bcrypt from "bcrypt";
+
+jest.mock("bcrypt");
+const bcryptHash = bcrypt.hash;
 
 let res, mockGetEncryptedPassword;
 
@@ -10,6 +14,7 @@ describe("Users controller", () => {
       sendStatus: jest.fn(),
     };
     mockGetEncryptedPassword = jest.fn(() => "khj234jl08");
+    bcryptHash.mockReset();
   });
 
   it("create creates a new user", async () => {
@@ -35,7 +40,8 @@ describe("Users controller", () => {
         }),
       };
     });
-    await usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    bcryptHash.mockResolvedValue("khj234jl08");
+    await usersController.create(req, res, mockUser);
     expect(mockUser).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
@@ -61,7 +67,7 @@ describe("Users controller", () => {
       };
     });
 
-    await usersController.create(req, res, mockGetEncryptedPassword, mockUser);
+    await usersController.create(req, res, mockUser);
     expect(mockUser).toHaveBeenCalled();
     expect(res.sendStatus).toHaveBeenCalledWith(400);
   });

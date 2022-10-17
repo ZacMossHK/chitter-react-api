@@ -1,4 +1,5 @@
 const User = require("../models/user");
+import bcrypt from "bcrypt";
 
 // do we need this?
 exports.index = (req, res) => {
