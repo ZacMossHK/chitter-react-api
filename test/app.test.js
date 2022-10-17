@@ -17,7 +17,7 @@ describe("App", () => {
     });
   });
 
-  it("creates a sser", async () => {
+  it("creates a user", async () => {
     const result = await supertest(app)
       .post("/users")
       .send({
