@@ -81,4 +81,6 @@ describe("App", () => {
       .send({ session: { username: "foo", password: "barry" } })
       .expect(403);
   });
+
+  it("DELETE /session will return status 204 if user is logged out", () => {});
 });
