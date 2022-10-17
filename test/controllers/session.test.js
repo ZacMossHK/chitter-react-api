@@ -1,7 +1,10 @@
 import * as sessionController from "../../controllers/session";
+import bcrypt from "bcrypt";
 const User = require("../../models/user");
 require("../mongodb_helper");
 let res;
+jest.mock("bcrypt");
+const bcryptCompare = bcrypt.compare;
 
 describe("Session controller", () => {
   beforeEach((done) => {
@@ -11,6 +14,7 @@ describe("Session controller", () => {
       sendStatus: jest.fn(),
       clearCookie: jest.fn(),
     };
+    bcryptCompare.mockReset();
     User.deleteMany(() => {
       done();
     });
@@ -68,61 +72,56 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: 2, username: "red" });
   });
 
-  it("create logs in if user exists and their password matches", () => {
+  it("create logs in if user exists and their password matches", async () => {
     const req = {
       session: {},
       body: { session: { username: "username", password: "password" } },
     };
     const mockUser = {
-      findOne: jest.fn((query, callback) =>
-        callback(null, {
+      findOne: jest.fn(() => {
+        return {
           _id: "id",
           username: "username",
           password: "108l34jk",
-        })
-      ),
+        };
+      }),
     };
-    const getEncryptedPassword = jest.fn();
-    getEncryptedPassword.mockReturnValueOnce("108l34jk");
-    sessionController.create(req, res, getEncryptedPassword, mockUser);
-    expect(getEncryptedPassword).toHaveBeenCalledWith("password");
+    bcryptCompare.mockResolvedValue(true);
+    await sessionController.create(req, res, mockUser);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: "id", username: "username" });
   });
 
-  it("create sends a 403 status if password is wrong", () => {
+  it("create sends a 403 status if password is wrong", async () => {
     const req = {
       session: {},
       body: { session: { username: "username", password: "otherpassword" } },
     };
     const mockUser = {
-      findOne: jest.fn((query, callback) =>
-        callback(null, {
+      findOne: jest.fn(() => {
+        return {
           _id: "id",
           username: "username",
           password: "108l34jk",
-        })
-      ),
+        };
+      }),
     };
-    const getEncryptedPassword = jest.fn();
-    getEncryptedPassword.mockReturnValueOnce("1oi1234kj");
-    sessionController.create(req, res, getEncryptedPassword, mockUser);
-    expect(getEncryptedPassword).toHaveBeenCalledWith("otherpassword");
+    bcryptCompare.mockResolvedValue(false);
+    await sessionController.create(req, res, mockUser);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
-  it("create sends a 403 status if username doesn't exist", () => {
+  it("create sends a 403 status if username doesn't exist", async () => {
     const req = {
       session: {},
       body: { session: { username: "username", password: "password" } },
     };
     const mockUser = {
-      findOne: jest.fn((query, callback) => callback("Error")),
+      findOne: jest.fn(() => {
+        throw new Error("CastError");
+      }),
     };
-    const getEncryptedPassword = jest.fn();
-    getEncryptedPassword.mockReturnValueOnce("108l34jk");
-    sessionController.create(req, res, getEncryptedPassword, mockUser);
-    expect(getEncryptedPassword).toHaveBeenCalledWith("password");
+    await sessionController.create(req, res, mockUser);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 

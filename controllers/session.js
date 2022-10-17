@@ -11,12 +11,20 @@ exports.index = (req, res) => {
   res.sendStatus(204);
 };
 
-exports.create = (req, res, getEncryptedPassword, userModel = User) => {
-  const encryptedPassword = getEncryptedPassword(req.body.session.password);
-  userModel.findOne({ username: req.body.session.username }, (err, user) => {
-    if (err || encryptedPassword !== user.password) return res.sendStatus(403);
+exports.create = async (req, res, userModel = User) => {
+  try {
+    const user = await userModel.findOne({
+      username: req.body.session.username,
+    });
+    const result = await bcrypt.compare(
+      req.body.session.password,
+      user.password
+    );
+    if (!result) throw new Error("Password is wrong");
     res.status(201).json({ _id: user._id, username: user.username });
-  });
+  } catch {
+    res.sendStatus(403);
+  }
 };
 
 exports.destroy = (req, res) => {
