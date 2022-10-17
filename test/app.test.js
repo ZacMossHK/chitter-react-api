@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
 
 describe("App", () => {
   beforeEach((done) => {
@@ -18,7 +19,7 @@ describe("App", () => {
     });
   });
 
-  it("POST /user creates a user", async () => {
+  it("POST /user creates a user with status 200", async () => {
     const result = await supertest(app)
       .post("/users")
       .send({
@@ -44,5 +45,20 @@ describe("App", () => {
       })
       .expect(400);
     return;
+  });
+
+  it("POST /session logs in a user with status 201", async () => {
+    const password = await bcrypt.hash("bar", 10);
+    const user = await new User({
+      username: "foo",
+      email: "email@example.com",
+      password: password,
+    }).save();
+    const result = await supertest(app)
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    expect(result.status).toBe(201);
+    expect(result.body._id).toBe(user._id.toString());
+    expect(result.body.username).toBe("foo");
   });
 });

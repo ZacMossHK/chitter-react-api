@@ -11,7 +11,6 @@ exports.index = (req, res) => {
 };
 
 exports.create = async (req, res) => {
-  console.log(req);
   try {
     const user = await User.findOne({
       username: req.body.session.username,
@@ -22,7 +21,8 @@ exports.create = async (req, res) => {
     );
     if (!result) throw new Error("Password is wrong");
     res.status(201).json({ _id: user._id, username: user.username });
-  } catch {
+  } catch (e) {
+    console.log(e);
     res.sendStatus(403);
   }
 };
