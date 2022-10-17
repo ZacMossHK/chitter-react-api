@@ -9,9 +9,10 @@ exports.show = async (req, res, peepsModel) => {
 };
 
 exports.destroy = async (req, res, peepsModel) => {
-  await peepsModel.findOneAndDelete({
+  const result = await peepsModel.findOneAndDelete({
     _id: req.params._id,
     userId: req.session.user._id,
   });
-  res.sendStatus(204);
+  const status = result.toString().includes("CastError") ? 403 : 204;
+  res.sendStatus(status);
 };

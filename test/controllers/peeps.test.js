@@ -66,11 +66,23 @@ describe("Peeps controller", () => {
       params: { _id: 1 },
       session: { user: { _id: 2 } },
     };
+    peepsModel.findOneAndDelete.mockReturnValueOnce({ _id: 1 });
     await peepsController.destroy(req, res, peepsModel);
     expect(peepsModel.findOneAndDelete).toHaveBeenCalledWith({
       _id: req.params._id,
       userId: req.session.user._id,
     });
     expect(res.sendStatus).toHaveBeenCalledWith(204);
+  });
+
+  it("returns 400 status if findOneAndDelete throws an error", async () => {
+    const peepsModel = { findOneAndDelete: jest.fn() };
+    const req = {
+      params: { _id: 1 },
+      session: { user: { _id: 2 } },
+    };
+    peepsModel.findOneAndDelete.mockReturnValueOnce(new Error("CastError"));
+    await peepsController.destroy(req, res, peepsModel);
+    expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 });
