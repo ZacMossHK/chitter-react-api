@@ -75,13 +75,13 @@ describe("Peeps controller", () => {
     expect(res.sendStatus).toHaveBeenCalledWith(204);
   });
 
-  it("returns 400 status if findOneAndDelete throws an error", async () => {
+  it("returns 400 status if findOneAndDelete can't find the matching peep", async () => {
     const peepsModel = { findOneAndDelete: jest.fn() };
     const req = {
       params: { peepId: 1 },
       session: { user: { _id: 2 } },
     };
-    peepsModel.findOneAndDelete.mockReturnValueOnce(new Error("CastError"));
+    peepsModel.findOneAndDelete.mockReturnValueOnce(null);
     await peepsController.destroy(req, res, peepsModel);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });

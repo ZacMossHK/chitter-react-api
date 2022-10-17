@@ -13,6 +13,6 @@ exports.destroy = async (req, res, peepsModel) => {
     _id: req.params.peepId,
     userId: req.session.user._id,
   });
-  const status = result.toString().includes("CastError") ? 403 : 204;
+  const status = !result ? 403 : 204;
   res.sendStatus(status);
 };

@@ -7,7 +7,8 @@ describe("Likes controller", () => {
   });
   it("update adds a like", () => {
     const req = {
-      params: {},
+      params: { peepId: 1 },
     };
+    // peepsModel.
   });
 });
