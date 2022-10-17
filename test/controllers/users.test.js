@@ -12,7 +12,7 @@ describe("Users controller", () => {
     mockGetEncryptedPassword = jest.fn(() => "khj234jl08");
   });
 
-  it("create creates a new user", () => {
+  it("create creates a new user", async () => {
     const req = {
       session: {},
       body: {
@@ -25,24 +25,23 @@ describe("Users controller", () => {
     };
     const mockUser = jest.fn().mockImplementation(() => {
       return {
-        save: jest.fn((callback) =>
-          callback(null, {
+        save: jest.fn(() => {
+          return {
             _id: 1,
             username: "username",
             password: "khj234jl08",
             email: "email@email.com",
-          })
-        ),
+          };
+        }),
       };
     });
-    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
-    expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
+    await usersController.create(req, res, mockGetEncryptedPassword, mockUser);
     expect(mockUser).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
   });
 
-  it("create sends a 400 status if the username or email already exist", () => {
+  it("create sends a 400 status if the username or email already exist", async () => {
     const req = {
       session: {},
       body: {
@@ -56,12 +55,13 @@ describe("Users controller", () => {
 
     const mockUser = jest.fn().mockImplementation(() => {
       return {
-        save: jest.fn((callback) => callback(new Error("MongoServerError"))),
+        save: jest.fn(() => {
+          throw new Error("MongoServerError");
+        }),
       };
     });
 
-    usersController.create(req, res, mockGetEncryptedPassword, mockUser);
-    expect(mockGetEncryptedPassword).toHaveBeenCalledWith("password");
+    await usersController.create(req, res, mockGetEncryptedPassword, mockUser);
     expect(mockUser).toHaveBeenCalled();
     expect(res.sendStatus).toHaveBeenCalledWith(400);
   });

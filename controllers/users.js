@@ -1,11 +1,12 @@
-exports.create = (req, res, getEncryptedPassword, userModel) => {
+exports.create = async (req, res, getEncryptedPassword, userModel) => {
   if (validateFields(req, res)) {
-    req.body.user.password = getEncryptedPassword(req.body.user.password);
-    new userModel(req.body.user).save((err, user) => {
-      if (err && err.toString().includes("MongoServerError"))
-        return res.sendStatus(400);
+    req.body.user.password = await getEncryptedPassword(req.body.user.password);
+    try {
+      const user = await new userModel(req.body.user).save();
       res.status(201).json({ _id: user._id, username: user.username });
-    });
+    } catch {
+      res.sendStatus(400);
+    }
   }
 };
 
