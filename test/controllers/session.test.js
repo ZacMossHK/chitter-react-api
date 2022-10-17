@@ -22,7 +22,7 @@ describe("Session controller", () => {
     expect(res.sendStatus).toHaveBeenCalledWith(204);
   });
 
-  it("getUser returns a user object if session exists", () => {
+  it("index returns a user object if session exists", () => {
     const req = {
       session: {
         user: {
@@ -38,7 +38,7 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: 0, username: "someone" });
   });
 
-  it("getUser returns a user object if session user exists", () => {
+  it("index returns a user object if session user exists", () => {
     const req = {
       session: {
         user: {
@@ -54,7 +54,7 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "one" });
   });
 
-  it("getUser returns a user object if session user exists", () => {
+  it("index returns a user object if session user exists", () => {
     const req = {
       session: {
         user: {
