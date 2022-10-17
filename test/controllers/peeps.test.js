@@ -22,12 +22,14 @@ describe("Peeps controller", () => {
         userId: 1,
         body: "foo",
         createdAt: new Date(2022, 10, 12),
+        likes: [],
       },
       {
         _id: 2,
         userId: 2,
         body: "bar",
         createdAt: new Date(2022, 10, 11),
+        likes: [],
       },
     ];
     peepsModel.limit.mockReturnValueOnce(peeps);
@@ -47,13 +49,28 @@ describe("Peeps controller", () => {
       userId: 1,
       body: "foo",
       createdAt: new Date(2022, 10, 17),
+      likes: [],
     };
     const req = {
       params: { _id: 1 },
     };
     peepsModel.findOne.mockReturnValueOnce(peep);
-    await peepsController.getSinglePeep(req, res, peepsModel);
-    expect(peepsModel.findOne).toHaveBeenCalled();
+    await peepsController.show(req, res, peepsModel);
+    expect(peepsModel.findOne).toHaveBeenCalledWith(req.params);
     expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it("destroys a single peep", async () => {
+    const peepsModel = { findOneAndDelete: jest.fn() };
+    const req = {
+      params: { _id: 1 },
+      session: { user: { _id: 2 } },
+    };
+    await peepsController.destroy(req, res, peepsModel);
+    expect(peepsModel.findOneAndDelete).toHaveBeenCalledWith({
+      _id: req.params._id,
+      userId: req.session.user._id,
+    });
+    expect(res.sendStatus).toHaveBeenCalledWith(204);
   });
 });
