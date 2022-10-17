@@ -1,10 +1,12 @@
 import * as sessionController from "../../controllers/session";
 import bcrypt from "bcrypt";
-const User = require("../../models/user");
+import User from "../../models/user";
 require("../mongodb_helper");
 let res;
 jest.mock("bcrypt");
 const bcryptCompare = bcrypt.compare;
+jest.mock("../../models/user");
+const userFindOne = User.findOne;
 
 describe("Session controller", () => {
   beforeEach(async () => {
@@ -15,7 +17,8 @@ describe("Session controller", () => {
       clearCookie: jest.fn(),
     };
     bcryptCompare.mockReset();
-    await User.deleteMany();
+    userFindOne.mockReset();
+    // await User.deleteMany();
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
     sessionController.index({ session: {} }, res);
@@ -70,22 +73,27 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({ _id: 2, username: "red" });
   });
 
-  it("create logs in if user exists and their password matches", async () => {
+  it.only("create logs in if user exists and their password matches", async () => {
     const req = {
       session: {},
       body: { session: { username: "username", password: "password" } },
     };
-    const mockUser = {
-      findOne: jest.fn(() => {
-        return {
-          _id: "id",
-          username: "username",
-          password: "108l34jk",
-        };
-      }),
-    };
+    // const mockUser = {
+    //   findOne: jest.fn(() => {
+    //     return {
+    //       _id: "id",
+    //       username: "username",
+    //       password: "108l34jk",
+    //     };
+    //   }),
+    // };
+    userFindOne.mockResolvedValue({
+      _id: "id",
+      username: "username",
+      password: "108l34jk",
+    });
     bcryptCompare.mockResolvedValue(true);
-    await sessionController.create(req, res, mockUser);
+    await sessionController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: "id", username: "username" });
   });

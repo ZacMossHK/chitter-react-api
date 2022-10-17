@@ -1,13 +1,14 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  email: { type: String, unique: true },
+  username: String,
+  email: String,
   password: String,
   peeps: [{ type: mongoose.Schema.Types.ObjectId, ref: "Peep" }],
 });
-
+UserSchema.index({ userId: 1 }, { unique: true });
+UserSchema.index({ email: 1 }, { unique: true });
 const User = mongoose.model("User", UserSchema);
-User.createIndexes();
+// User.createIndexes();
 
 module.exports = User;

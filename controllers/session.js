@@ -11,9 +11,9 @@ exports.index = (req, res) => {
   res.sendStatus(204);
 };
 
-exports.create = async (req, res, userModel = User) => {
+exports.create = async (req, res) => {
   try {
-    const user = await userModel.findOne({
+    const user = await User.findOne({
       username: req.body.session.username,
     });
     const result = await bcrypt.compare(
