@@ -1,6 +1,8 @@
 import * as peepsController from "../../controllers/peeps";
-
+import Peep from "../../models/peep";
+jest.mock("../../models/peep");
 let res;
+
 describe("Peeps controller", () => {
   beforeEach(() => {
     res = {
@@ -8,14 +10,9 @@ describe("Peeps controller", () => {
       status: jest.fn().mockReturnThis(),
       sendStatus: jest.fn(),
     };
+    Peep.mockReset();
   });
   it("gets the latest 50 peeps", async () => {
-    const peepsModel = {
-      find: jest.fn().mockReturnThis(),
-      sort: jest.fn().mockReturnThis(),
-      limit: jest.fn(),
-    };
-
     const peeps = [
       {
         _id: 1,
@@ -32,18 +29,16 @@ describe("Peeps controller", () => {
         likes: [],
       },
     ];
-    peepsModel.limit.mockReturnValueOnce(peeps);
-    await peepsController.index({}, res, peepsModel);
-    expect(peepsModel.find).toHaveBeenCalled();
-    expect(peepsModel.sort).toHaveBeenCalledWith({ createdAt: -1 });
-    expect(peepsModel.limit).toHaveBeenCalledWith(50);
+
+    Peep.find.mockImplementation(() => ({
+      sort: jest.fn().mockReturnThis(),
+      limit: jest.fn(() => peeps),
+    }));
+    await peepsController.index({}, res);
     expect(res.json).toHaveBeenCalledWith(peeps);
   });
 
   it("gets a single peep", async () => {
-    const peepsModel = {
-      findOne: jest.fn(),
-    };
     const peep = {
       _id: 1,
       userId: 1,
@@ -54,35 +49,28 @@ describe("Peeps controller", () => {
     const req = {
       params: { peepId: 1 },
     };
-    peepsModel.findOne.mockReturnValueOnce(peep);
-    await peepsController.show(req, res, peepsModel);
-    expect(peepsModel.findOne).toHaveBeenCalledWith({ _id: req.params.peepId });
+    Peep.findOne.mockResolvedValue(peep);
+    await peepsController.show(req, res);
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
   it("destroys a single peep", async () => {
-    const peepsModel = { findOneAndDelete: jest.fn() };
     const req = {
       params: { peepId: 1 },
       session: { user: { _id: 2 } },
     };
-    peepsModel.findOneAndDelete.mockReturnValueOnce({ _id: 1 });
-    await peepsController.destroy(req, res, peepsModel);
-    expect(peepsModel.findOneAndDelete).toHaveBeenCalledWith({
-      _id: req.params.peepId,
-      userId: req.session.user._id,
-    });
+    Peep.findOneAndDelete.mockResolvedValue({ _id: 1 });
+    await peepsController.destroy(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(204);
   });
 
   it("returns 400 status if findOneAndDelete can't find the matching peep", async () => {
-    const peepsModel = { findOneAndDelete: jest.fn() };
     const req = {
       params: { peepId: 1 },
       session: { user: { _id: 2 } },
     };
-    peepsModel.findOneAndDelete.mockReturnValueOnce(null);
-    await peepsController.destroy(req, res, peepsModel);
+    Peep.findOneAndDelete.mockResolvedValue(null);
+    await peepsController.destroy(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 });

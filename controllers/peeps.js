@@ -1,15 +1,17 @@
-exports.index = async (req, res, peepsModel) => {
-  const peeps = await peepsModel.find().sort({ createdAt: -1 }).limit(50);
+import Peep from "../models/peep";
+
+exports.index = async (req, res) => {
+  const peeps = await Peep.find().sort({ createdAt: -1 }).limit(50);
   res.json(peeps);
 };
 
-exports.show = async (req, res, peepsModel) => {
-  const peep = await peepsModel.findOne({ _id: req.params.peepId });
+exports.show = async (req, res) => {
+  const peep = await Peep.findOne({ _id: req.params.peepId });
   res.json(peep);
 };
 
-exports.destroy = async (req, res, peepsModel) => {
-  const result = await peepsModel.findOneAndDelete({
+exports.destroy = async (req, res) => {
+  const result = await Peep.findOneAndDelete({
     _id: req.params.peepId,
     userId: req.session.user._id,
   });
