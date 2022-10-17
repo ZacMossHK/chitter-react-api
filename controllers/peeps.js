@@ -4,13 +4,13 @@ exports.index = async (req, res, peepsModel) => {
 };
 
 exports.show = async (req, res, peepsModel) => {
-  const peep = await peepsModel.findOne({ _id: req.params._id });
+  const peep = await peepsModel.findOne({ _id: req.params.peepId });
   res.json(peep);
 };
 
 exports.destroy = async (req, res, peepsModel) => {
   const result = await peepsModel.findOneAndDelete({
-    _id: req.params._id,
+    _id: req.params.peepId,
     userId: req.session.user._id,
   });
   const status = result.toString().includes("CastError") ? 403 : 204;

@@ -52,24 +52,24 @@ describe("Peeps controller", () => {
       likes: [],
     };
     const req = {
-      params: { _id: 1 },
+      params: { peepId: 1 },
     };
     peepsModel.findOne.mockReturnValueOnce(peep);
     await peepsController.show(req, res, peepsModel);
-    expect(peepsModel.findOne).toHaveBeenCalledWith(req.params);
+    expect(peepsModel.findOne).toHaveBeenCalledWith({ _id: req.params.peepId });
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
   it("destroys a single peep", async () => {
     const peepsModel = { findOneAndDelete: jest.fn() };
     const req = {
-      params: { _id: 1 },
+      params: { peepId: 1 },
       session: { user: { _id: 2 } },
     };
     peepsModel.findOneAndDelete.mockReturnValueOnce({ _id: 1 });
     await peepsController.destroy(req, res, peepsModel);
     expect(peepsModel.findOneAndDelete).toHaveBeenCalledWith({
-      _id: req.params._id,
+      _id: req.params.peepId,
       userId: req.session.user._id,
     });
     expect(res.sendStatus).toHaveBeenCalledWith(204);
@@ -78,7 +78,7 @@ describe("Peeps controller", () => {
   it("returns 400 status if findOneAndDelete throws an error", async () => {
     const peepsModel = { findOneAndDelete: jest.fn() };
     const req = {
-      params: { _id: 1 },
+      params: { peepId: 1 },
       session: { user: { _id: 2 } },
     };
     peepsModel.findOneAndDelete.mockReturnValueOnce(new Error("CastError"));
