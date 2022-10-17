@@ -7,7 +7,7 @@ jest.mock("bcrypt");
 const bcryptCompare = bcrypt.compare;
 
 describe("Session controller", () => {
-  beforeEach((done) => {
+  beforeEach(async () => {
     res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
@@ -15,9 +15,7 @@ describe("Session controller", () => {
       clearCookie: jest.fn(),
     };
     bcryptCompare.mockReset();
-    User.deleteMany(() => {
-      done();
-    });
+    await User.deleteMany();
   });
   it("getUser returns an null value in the returned object when not logged in", () => {
     sessionController.index({ session: {} }, res);
