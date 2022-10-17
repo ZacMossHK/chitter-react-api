@@ -98,7 +98,6 @@ describe("Session controller", () => {
       username: "username",
       password: "108l34jk",
     });
-
     bcryptCompare.mockResolvedValue(false);
     await sessionController.create(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(403);

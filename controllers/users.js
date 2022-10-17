@@ -1,10 +1,11 @@
+import User from "../models/user";
 import bcrypt from "bcrypt";
 
-exports.create = async (req, res, userModel) => {
+exports.create = async (req, res) => {
   if (validateFields(req, res)) {
     req.body.user.password = await bcrypt.hash(req.body.user.password);
     try {
-      const user = await new userModel(req.body.user).save();
+      const user = await new User(req.body.user).save();
       res.status(201).json({ _id: user._id, username: user.username });
     } catch {
       res.sendStatus(400);

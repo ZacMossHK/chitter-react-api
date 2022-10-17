@@ -1,10 +1,12 @@
 import * as usersController from "../../controllers/users";
 import bcrypt from "bcrypt";
+import User from "../../models/user";
 
 jest.mock("bcrypt");
 const bcryptHash = bcrypt.hash;
+jest.mock("../../models/user");
 
-let res, mockGetEncryptedPassword;
+let res;
 
 describe("Users controller", () => {
   beforeEach(() => {
@@ -13,8 +15,8 @@ describe("Users controller", () => {
       status: jest.fn().mockReturnThis(),
       sendStatus: jest.fn(),
     };
-    mockGetEncryptedPassword = jest.fn(() => "khj234jl08");
     bcryptHash.mockReset();
+    User.mockReset();
   });
 
   it("create creates a new user", async () => {
@@ -28,7 +30,7 @@ describe("Users controller", () => {
         },
       },
     };
-    const mockUser = jest.fn().mockImplementation(() => {
+    User.mockImplementation(() => {
       return {
         save: jest.fn(() => {
           return {
@@ -41,8 +43,7 @@ describe("Users controller", () => {
       };
     });
     bcryptHash.mockResolvedValue("khj234jl08");
-    await usersController.create(req, res, mockUser);
-    expect(mockUser).toHaveBeenCalled();
+    await usersController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "username" });
   });
@@ -59,7 +60,7 @@ describe("Users controller", () => {
       },
     };
 
-    const mockUser = jest.fn().mockImplementation(() => {
+    User.mockImplementation(() => {
       return {
         save: jest.fn(() => {
           throw new Error("MongoServerError");
@@ -67,8 +68,7 @@ describe("Users controller", () => {
       };
     });
 
-    await usersController.create(req, res, mockUser);
-    expect(mockUser).toHaveBeenCalled();
+    await usersController.create(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(400);
   });
 
