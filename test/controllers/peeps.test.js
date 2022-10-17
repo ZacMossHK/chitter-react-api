@@ -37,4 +37,23 @@ describe("Peeps controller", () => {
     expect(peepsModel.limit).toHaveBeenCalledWith(50);
     expect(res.json).toHaveBeenCalledWith(peeps);
   });
+
+  it("gets a single peep", async () => {
+    const peepsModel = {
+      findOne: jest.fn(),
+    };
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "foo",
+      createdAt: new Date(2022, 10, 17),
+    };
+    const req = {
+      params: { _id: 1 },
+    };
+    peepsModel.findOne.mockReturnValueOnce(peep);
+    await peepsController.getSinglePeep(req, res, peepsModel);
+    expect(peepsModel.findOne).toHaveBeenCalled();
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
 });
