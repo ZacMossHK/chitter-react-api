@@ -1,9 +1,8 @@
 const User = require("../models/user");
-import bcrypt from "bcrypt";
-
+const bcrypt = require("bcrypt");
 // do we need this?
 exports.index = (req, res) => {
-  if (req.session.user)
+  if (req.session && req.session.user)
     return res.json({
       _id: req.session.user._id,
       username: req.session.user.username,
@@ -12,6 +11,7 @@ exports.index = (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  console.log(req);
   try {
     const user = await User.findOne({
       username: req.body.session.username,
