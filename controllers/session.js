@@ -22,7 +22,6 @@ exports.create = async (req, res) => {
     if (!result) throw new Error("Password is wrong");
     res.status(201).json({ _id: user._id, username: user.username });
   } catch (e) {
-    console.log(e);
     res.sendStatus(403);
   }
 };

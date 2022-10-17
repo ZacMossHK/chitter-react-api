@@ -61,4 +61,24 @@ describe("App", () => {
     expect(result.body._id).toBe(user._id.toString());
     expect(result.body.username).toBe("foo");
   });
+
+  it("POST /session will return status 403 if username doesn't exist", async () => {
+    await supertest(app)
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } })
+      .expect(403);
+  });
+
+  it("POST /session will return status 403 if password doesn't match", async () => {
+    const password = await bcrypt.hash("bar", 10);
+    const user = await new User({
+      username: "foo",
+      email: "email@example.com",
+      password: password,
+    }).save();
+    await supertest(app)
+      .post("/session")
+      .send({ session: { username: "foo", password: "barry" } })
+      .expect(403);
+  });
 });
