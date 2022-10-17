@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const LikeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  peepId: { type: mongoose.Schema.Types.ObjectId, ref: "Peep" },
   username: String,
 });
-
+LikeSchema.index({ userId: 1, peepId: 1 }, { unique: true });
 const Like = mongoose.model("Like", LikeSchema);
-Like.createIndexes();
 
 module.exports = Like;

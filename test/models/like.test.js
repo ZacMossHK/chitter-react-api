@@ -2,11 +2,12 @@ const Like = require("../../models/like");
 require("../mongodb_helper");
 const mongoose = require("mongoose");
 
-let mockUserId;
+let mockUserId, mockPeepId;
 
 describe("Like model", () => {
   beforeEach((done) => {
     mockUserId = new mongoose.Types.ObjectId();
+    mockPeepId = new mongoose.Types.ObjectId();
     Like.deleteMany(() => {
       done();
     });
