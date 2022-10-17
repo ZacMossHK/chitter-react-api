@@ -1,17 +1,23 @@
 import * as likesController from "../../controllers/likes";
+import Like from "../../models/like";
+import Peep from "../../models/peep";
+jest.mock("../../models/like");
+jest.mock("../../models/peep");
 
 let res;
+
 describe("Likes controller", () => {
   beforeEach(() => {
     res = { json: jest.fn(), sendStatus: jest.fn() };
+    Like.mockReset();
+    Peep.mockReset();
   });
   it("update adds a like", async () => {
     const req = {
       params: { peepId: 1 },
       session: { user: { _id: 1, username: "foo" } },
     };
-    const mockPeepModel = { findOneAndUpdate: jest.fn() };
-    const mockLikeModel = jest.fn().mockImplementation(() => {
+    Like.mockImplementation(() => {
       return {
         save: jest.fn(() => {
           return {
@@ -23,8 +29,8 @@ describe("Likes controller", () => {
         }),
       };
     });
-    mockPeepModel.findOneAndUpdate.mockReturnValueOnce({ _id: 1 });
-    await likesController.update(req, res, mockPeepModel, mockLikeModel);
+    Peep.findOneAndUpdate.mockReturnValueOnce({ _id: 1 });
+    await likesController.update(req, res);
     expect(res.json).toHaveBeenCalledWith({
       like: { _id: 1, userId: 1, peepId: 1, username: "foo" },
     });
@@ -35,11 +41,10 @@ describe("Likes controller", () => {
       params: { peepId: 1 },
       session: { user: { _id: 1, username: "foo" } },
     };
-    const mockPeepModel = { findOneAndUpdate: jest.fn() };
-    const mockLikeModel = jest.fn().mockImplementation(() => {
+    Like.mockImplementation(() => {
       throw new Error("MongoServerError");
     });
-    await likesController.update(req, res, mockPeepModel, mockLikeModel);
+    await likesController.update(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
@@ -48,15 +53,13 @@ describe("Likes controller", () => {
       params: { peepId: 1 },
       session: { user: { _id: 1 } },
     };
-    const mockPeepModel = { findOneAndUpdate: jest.fn() };
-    const mockLikeModel = { findOneAndDelete: jest.fn() };
-    mockLikeModel.findOneAndDelete.mockReturnValueOnce({
+    Like.findOneAndDelete.mockReturnValueOnce({
       _id: 1,
       peepId: 1,
       userId: 1,
       username: "foo",
     });
-    await likesController.destroy(req, res, mockPeepModel, mockLikeModel);
+    await likesController.destroy(req, res);
     expect(res.sendStatus).toBeCalledWith(204);
   });
 });
