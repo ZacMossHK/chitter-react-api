@@ -42,4 +42,21 @@ describe("Likes controller", () => {
     await likesController.update(req, res, mockPeepModel, mockLikeModel);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
+
+  it("destroy removes a like from the likes array", async () => {
+    const req = {
+      params: { peepId: 1 },
+      session: { user: { _id: 1 } },
+    };
+    const mockPeepModel = { findOneAndUpdate: jest.fn() };
+    const mockLikeModel = { findOneAndDelete: jest.fn() };
+    mockLikeModel.findOneAndDelete.mockReturnValueOnce({
+      _id: 1,
+      peepId: 1,
+      userId: 1,
+      username: "foo",
+    });
+    await likesController.destroy(req, res, mockPeepModel, mockLikeModel);
+    expect(res.sendStatus).toBeCalledWith(204);
+  });
 });

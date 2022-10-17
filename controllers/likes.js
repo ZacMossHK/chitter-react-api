@@ -14,3 +14,15 @@ exports.update = async (req, res, peepModel, likeModel) => {
     res.sendStatus(403);
   }
 };
+
+exports.destroy = async (req, res, peepModel, likeModel) => {
+  const like = await likeModel.findOneAndDelete({
+    peepId: req.params.peepId,
+    userId: req.session.user._id,
+  });
+  await peepModel.findOneAndUpdate(
+    { _id: req.params.peepId },
+    { $pull: { likes: like._id } }
+  );
+  res.sendStatus(204);
+};
