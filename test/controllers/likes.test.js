@@ -8,6 +8,7 @@ describe("Likes controller", () => {
   it("update adds a like", async () => {
     const req = {
       params: { peepId: 1 },
+      session: { user: { _id: 1, username: "foo" } },
     };
     const mockPeepModel = { findOneAndUpdate: jest.fn() };
     const mockLikeModel = jest.fn().mockImplementation(() => {
@@ -16,6 +17,7 @@ describe("Likes controller", () => {
           return {
             _id: 1,
             userId: 1,
+            peepId: 1,
             username: "foo",
           };
         }),
@@ -24,7 +26,7 @@ describe("Likes controller", () => {
     mockPeepModel.findOneAndUpdate.mockReturnValueOnce({ _id: 1 });
     await likesController.update(req, res, mockPeepModel, mockLikeModel);
     expect(res.json).toHaveBeenCalledWith({
-      user: { userId: 1, username: "foo" },
+      like: { _id: 1, userId: 1, peepId: 1, username: "foo" },
     });
   });
 });
