@@ -155,5 +155,18 @@ describe("App", () => {
     await supertest(app).get("/peeps/4").expect(404);
   });
 
-  it("POST /peeps will create a peep and return peep info");
+  it("POST /peeps will create a peep and return 201 status with the created peep object", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const result = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello world" } });
+    expect(result.status).toBe(201);
+    expect(result.body.body).toBe("hello world");
+  });
 });
