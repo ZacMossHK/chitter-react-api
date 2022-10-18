@@ -169,4 +169,11 @@ describe("App", () => {
     expect(result.status).toBe(201);
     expect(result.body.body).toBe("hello world");
   });
+
+  it("POST /peeps will return a 403 status if trying to create a peep when not logged in", async () => {
+    await supertest(app)
+      .post("/peeps")
+      .send({ peep: { body: "hello world" } })
+      .expect(403);
+  });
 });
