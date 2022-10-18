@@ -3,6 +3,7 @@ const supertest = require("supertest-session");
 const app = require("../app");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const Peep = require("../models/peep");
 
 describe("App", () => {
   beforeEach((done) => {
@@ -94,5 +95,31 @@ describe("App", () => {
       .post("/session")
       .send({ session: { username: "foo", password: "bar" } });
     await session.delete("/session").expect(204);
+  });
+
+  it("GET /peeps will return 200 status and peeps in reverse chronolocial order", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be last",
+      createdAt: new Date(2022, 10, 11),
+    }).save();
+
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be first",
+      createdAt: new Date(2022, 10, 13),
+    }).save();
+
+    await new Peep({
+      userId: mockUserId,
+      body: "this should be in the middle",
+      createdAt: new Date(2022, 10, 12),
+    }).save();
+    const result = await supertest(app).get("/peeps");
+    expect(result.status).toBe(200);
+    expect(result.body[0].body).toBe("this should be first");
+    expect(result.body[1].body).toBe("this should be in the middle");
+    expect(result.body[2].body).toBe("this should be last");
   });
 });
