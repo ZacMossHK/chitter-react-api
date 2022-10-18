@@ -154,4 +154,6 @@ describe("App", () => {
   it("GET /peeps/:peepId where peepId doesn't exist will return a 404 status", async () => {
     await supertest(app).get("/peeps/4").expect(404);
   });
+
+  it("POST /peeps will create a peep with a 201 status and return peep info");
 });

@@ -14,6 +14,16 @@ exports.show = async (req, res) => {
   }
 };
 
+exports.create = async (req, res) => {
+  const peep = await new Peep({
+    userId: req.session.user._id,
+    body: req.body.peep.body,
+    createdAt: Date.now(),
+    likes: [],
+  }).save();
+  res.json(peep);
+};
+
 exports.destroy = async (req, res) => {
   const result = await Peep.findOneAndDelete({
     _id: req.params.peepId,

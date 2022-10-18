@@ -54,6 +54,29 @@ describe("Peeps controller", () => {
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
+  it("creates a peep", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "foo",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "foo" } },
+      session: { user: { _id: 1 } },
+    };
+    await peepsController.create(req, res);
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
   it("destroys a single peep", async () => {
     const req = {
       params: { peepId: 1 },
