@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
     createdAt: Date.now(),
     likes: [],
   }).save();
-  res.json(peep);
+  return res.status(201).json(peep);
 };
 
 exports.destroy = async (req, res) => {

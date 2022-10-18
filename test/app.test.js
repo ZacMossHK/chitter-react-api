@@ -155,5 +155,5 @@ describe("App", () => {
     await supertest(app).get("/peeps/4").expect(404);
   });
 
-  it("POST /peeps will create a peep with a 201 status and return peep info");
+  it("POST /peeps will create a peep and return peep info");
 });

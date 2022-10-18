@@ -74,6 +74,7 @@ describe("Peeps controller", () => {
       session: { user: { _id: 1 } },
     };
     await peepsController.create(req, res);
+    expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
