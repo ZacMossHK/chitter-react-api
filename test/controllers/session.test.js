@@ -74,6 +74,7 @@ describe("Session controller", () => {
   it("create logs in if user exists and their password matches", async () => {
     const req = {
       session: {},
+      cookies: { user_sid: 1 },
       body: { session: { username: "username", password: "password" } },
     };
 
@@ -85,7 +86,11 @@ describe("Session controller", () => {
     bcryptCompare.mockResolvedValue(true);
     await sessionController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ _id: "id", username: "username" });
+    expect(res.json).toHaveBeenCalledWith({
+      _id: "id",
+      username: "username",
+      userSid: 1,
+    });
   });
 
   it("create sends a 403 status if password is wrong", async () => {
