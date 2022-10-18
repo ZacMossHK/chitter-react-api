@@ -136,4 +136,18 @@ describe("App", () => {
     expect(result.status).toBe(200);
     expect(result.body.length).toBe(50);
   });
+
+  it("GET /peeps/:peepId will return 200 status and an individual peep", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    const peep = await new Peep({
+      userId: mockUserId,
+      body: "foo",
+      createdAt: new Date(2022, 10, 11),
+    }).save();
+    const result = await supertest(app).get(`/peeps/${peep._id}`);
+    expect(result.status).toBe(200);
+    Object.keys(peep).forEach((key) => {
+      expect(result.body[key]).toBe(JSON.stringify(peep)[key]);
+    });
+  });
 });
