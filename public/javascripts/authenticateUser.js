@@ -1,10 +1,8 @@
 authenticateUser = (req, res, next) => {
-  if (
-    req.cookies.user_sid &&
-    req.headers.Authorization &&
-    req.headers.Authorization.split(" ")[1] === req.cookies.user_sid.toString()
-  )
-    return next();
+  try {
+    if (req.cookies.user_sid.split(".")[0].slice(2) === req.session.id)
+      return next();
+  } catch {}
   res.sendStatus(403);
 };
 

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const supertest = require("supertest");
+const supertest = require("supertest-session");
 const app = require("../app");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
@@ -84,15 +84,15 @@ describe("App", () => {
 
   it("DELETE /session will return status 204 if user is logged out", async () => {
     const password = await bcrypt.hash("bar", 10);
-    const user = await new User({
+    await new User({
       username: "foo",
       email: "email@example.com",
       password: password,
     }).save();
-    const result = await supertest(app)
+    const session = supertest(app);
+    await session
       .post("/session")
       .send({ session: { username: "foo", password: "bar" } });
-    const userSid = result.body.userSid;
-    await (await supertest(app).delete("/session")).set(Authorization);
+    await session.delete("/session").expect(204);
   });
 });

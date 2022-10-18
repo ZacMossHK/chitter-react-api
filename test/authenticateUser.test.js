@@ -7,10 +7,10 @@ describe("authenticateUser", () => {
     res = { sendStatus: jest.fn() };
     next = jest.fn();
   });
-  it("calls next when userSid matches the authorization token", () => {
+  it("calls next when session id matches the cookie user_sid", () => {
     const req = {
-      cookies: { user_sid: 1 },
-      headers: { Authorization: "Token 1" },
+      cookies: { user_sid: "s:123.123" },
+      session: { id: "123" },
     };
     authenticateUser(req, res, next);
     expect(next).toHaveBeenCalled();
@@ -18,17 +18,16 @@ describe("authenticateUser", () => {
 
   it("returns 403 error if they don't match", () => {
     const req = {
-      cookies: { user_sid: 1 },
-      headers: { Authorization: "Token 2" },
+      cookies: { user_sid: "s:123.123" },
+      session: { id: "456" },
     };
     authenticateUser(req, res, next);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
-  it("returns 403 error if no Authorization header was provided", () => {
+  it("returns 403 error if no cookie  was provided", () => {
     const req = {
-      cookies: { user_sid: 1 },
-      headers: {},
+      session: { id: "123" },
     };
     authenticateUser(req, res, next);
     expect(res.sendStatus).toHaveBeenCalledWith(403);

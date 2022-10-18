@@ -89,7 +89,6 @@ describe("Session controller", () => {
     expect(res.json).toHaveBeenCalledWith({
       _id: "id",
       username: "username",
-      userSid: 1,
     });
   });
 

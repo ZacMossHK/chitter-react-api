@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 const session = require("express-session");
+require("dotenv").config();
 
 var usersRouter = require("./routes/users");
 const sessionRouter = require("./routes/session");
@@ -15,20 +16,18 @@ var app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/session", sessionRouter);
-app.use("/users", usersRouter);
-
 app.use(
   session({
     key: "user_sid",
-    secret: ENV["SECRET"],
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -36,6 +35,9 @@ app.use(
     },
   })
 );
+
+app.use("/session", sessionRouter);
+app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

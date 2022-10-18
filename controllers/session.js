@@ -1,4 +1,5 @@
 const User = require("../models/user");
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 // do we need this?
 exports.index = (req, res) => {
@@ -20,13 +21,11 @@ exports.create = async (req, res) => {
       user.password
     );
     if (!result) throw new Error("Password is wrong");
-    res
-      .status(201)
-      .json({
-        _id: user._id,
-        username: user.username,
-        userSid: req.cookies.user_sid,
-      });
+    req.session.user = user;
+    res.status(201).json({
+      _id: user._id,
+      username: user.username,
+    });
   } catch (e) {
     res.sendStatus(403);
   }
