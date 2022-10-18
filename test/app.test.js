@@ -122,4 +122,18 @@ describe("App", () => {
     expect(result.body[1].body).toBe("this should be in the middle");
     expect(result.body[2].body).toBe("this should be last");
   });
+
+  it("GET /peeps will return 200 status and limit peeps to 50", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    for (let i = 0; i < 100; i++) {
+      await new Peep({
+        userId: mockUserId,
+        body: "foo",
+        createdAt: new Date(2022, 10, 11),
+      }).save();
+    }
+    const result = await supertest(app).get("/peeps");
+    expect(result.status).toBe(200);
+    expect(result.body.length).toBe(50);
+  });
 });
