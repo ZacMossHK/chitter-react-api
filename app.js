@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
+const session = require("express-session");
 
 var usersRouter = require("./routes/users");
 const sessionRouter = require("./routes/session");
@@ -23,6 +24,18 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/session", sessionRouter);
 app.use("/users", usersRouter);
+
+app.use(
+  session({
+    key: "user_sid",
+    secret: ENV["SECRET"],
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      expires: 600000,
+    },
+  })
+);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

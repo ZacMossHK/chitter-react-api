@@ -82,5 +82,17 @@ describe("App", () => {
       .expect(403);
   });
 
-  it("DELETE /session will return status 204 if user is logged out", () => {});
+  it("DELETE /session will return status 204 if user is logged out", async () => {
+    const password = await bcrypt.hash("bar", 10);
+    const user = await new User({
+      username: "foo",
+      email: "email@example.com",
+      password: password,
+    }).save();
+    const result = await supertest(app)
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const userSid = result.body.userSid;
+    await (await supertest(app).delete("/session")).set(Authorization);
+  });
 });
