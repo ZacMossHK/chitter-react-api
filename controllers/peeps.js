@@ -6,8 +6,12 @@ exports.index = async (req, res) => {
 };
 
 exports.show = async (req, res) => {
-  const peep = await Peep.findOne({ _id: req.params.peepId });
-  res.json(peep);
+  try {
+    const peep = await Peep.findOne({ _id: req.params.peepId });
+    res.json(peep);
+  } catch {
+    res.sendStatus(404);
+  }
 };
 
 exports.destroy = async (req, res) => {

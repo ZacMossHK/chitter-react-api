@@ -150,4 +150,8 @@ describe("App", () => {
       expect(result.body[key]).toBe(JSON.stringify(peep)[key]);
     });
   });
+
+  it("GET /peeps/:peepId where peepId doesn't exist will return a 404 status", async () => {
+    await supertest(app).get("/peeps/4").expect(404);
+  });
 });
