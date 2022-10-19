@@ -4,6 +4,7 @@ const app = require("../app");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const Peep = require("../models/peep");
+const session = require("express-session");
 
 describe("App", () => {
   beforeEach((done) => {
@@ -221,5 +222,15 @@ describe("App", () => {
       .post("/session")
       .send({ session: { username: "foo", password: "bar" } });
     await session.delete(`/peeps/${peep._id}`).expect(403);
+  });
+
+  it("DELETE /peeps/:peepId will return a 403 status if the user is not logged in", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    const peep = await new Peep({
+      userId: mockUserId,
+      body: "foobar",
+      createdAt: new Date(2022, 10, 13),
+    }).save();
+    await supertest(app).delete(`/peeps/${peep._id}`).expect(403);
   });
 });
