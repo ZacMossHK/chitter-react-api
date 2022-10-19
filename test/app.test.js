@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest-session");
 const app = require("../app");
-const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const User = require("../models/user");
 const Peep = require("../models/peep");
+const Like = require("../models/like");
 const session = require("express-session");
+const { default: JSDOMEnvironment } = require("jest-environment-jsdom");
 
 describe("App", () => {
   beforeEach((done) => {
@@ -232,5 +234,25 @@ describe("App", () => {
       createdAt: new Date(2022, 10, 13),
     }).save();
     await supertest(app).delete(`/peeps/${peep._id}`).expect(403);
+  });
+
+  it("PUT /peeps/:peepId/likes will return a 201 status and create a like and add it to the peep's likes array", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.post("/peeps").send({ peep: { body: "hello world" } });
+    const peep = await Peep.find();
+    const result = await session.put(`/peeps/${peep[0]._id}/likes`);
+    expect(result.status).toBe(201);
+    const like = await Like.find();
+    Object.keys(result.body).forEach((key) =>
+      expect(result.body[key].toString()).toBe(like[0][key].toString())
+    );
+    const resultPeeps = await Peep.find();
+    expect(resultPeeps[0].likes[0].toString()).toBe(like[0]._id.toString());
   });
 });

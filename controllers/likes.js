@@ -12,7 +12,7 @@ exports.update = async (req, res) => {
       { _id: req.params.peepId },
       { $push: { likes: like._id } }
     );
-    res.json({ like: like });
+    res.status(201).json(like);
   } catch {
     res.sendStatus(403);
   }
