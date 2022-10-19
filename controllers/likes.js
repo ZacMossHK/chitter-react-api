@@ -25,13 +25,17 @@ exports.update = async (req, res) => {
 };
 
 exports.destroy = async (req, res) => {
-  const like = await Like.findOneAndDelete({
-    peepId: req.params.peepId,
-    userId: req.session.user._id,
-  });
-  await Peep.findOneAndUpdate(
-    { _id: req.params.peepId },
-    { $pull: { likes: like._id } }
-  );
-  res.sendStatus(204);
+  try {
+    const like = await Like.findOneAndDelete({
+      peepId: req.params.peepId,
+      userId: req.session.user._id,
+    });
+    await Peep.findOneAndUpdate(
+      { _id: req.params.peepId },
+      { $pull: { likes: like._id } }
+    );
+    res.sendStatus(204);
+  } catch {
+    res.sendStatus(404);
+  }
 };

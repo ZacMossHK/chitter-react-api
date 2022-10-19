@@ -272,7 +272,7 @@ describe("App", () => {
     await supertest(app).put("/peeps/1/likes").expect(403);
   });
 
-  it.only("DELETE /peeps/:peepId/likes will return a 204 status if a like is successfully deleted", async () => {
+  it("DELETE /peeps/:peepId/likes will return a 204 status if a like is successfully deleted", async () => {
     const session = supertest(app);
     await session.post("/users").send({
       user: { username: "foo", email: "email@email.com", password: "bar" },
@@ -289,5 +289,19 @@ describe("App", () => {
     expect(likes.length).toBe(0);
     const peep = await Peep.findOne({ _id: peepResponse.body._id });
     expect(peep.likes.length).toBe(0);
+  });
+
+  it("DELETE /peeps/:peepId/likes will return a 404 status if a like doesn't exist", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const peepResponse = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello world" } });
+    await session.delete(`/peeps/${peepResponse.body._id}/likes`).expect(404);
   });
 });
