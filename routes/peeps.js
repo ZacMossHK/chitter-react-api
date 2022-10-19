@@ -8,6 +8,6 @@ router.get("/", peepsController.index);
 router.post("/", authenticateUser, peepsController.create);
 router.get("/:peepId", peepsController.show);
 router.delete("/:peepId", authenticateUser, peepsController.destroy);
-router.put("/:peepId/likes", likesController.update);
+router.put("/:peepId/likes", authenticateUser, likesController.update);
 
 module.exports = router;
