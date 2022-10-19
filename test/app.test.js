@@ -100,8 +100,23 @@ describe("App", () => {
     await session.delete("/session").expect(204);
   });
 
-  it.only("DELETE /session will return status 403 if user is not logged in", async () => {
+  it("DELETE /session will return status 403 if user is not logged in", async () => {
     await supertest(app).delete("/session").expect(403);
+  });
+
+  it("DELETE /session will remove the user_sid cookie", async () => {
+    const password = await bcrypt.hash("bar", 10);
+    await new User({
+      username: "foo",
+      email: "email@example.com",
+      password: password,
+    }).save();
+    const session = supertest(app);
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.delete("/session").expect(204);
+    await session.delete("/session").expect(403);
   });
 
   it("GET /peeps will return 200 status and peeps in reverse chronolocial order", async () => {
