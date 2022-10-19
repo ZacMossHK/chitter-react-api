@@ -25,10 +25,14 @@ exports.create = async (req, res) => {
 };
 
 exports.destroy = async (req, res) => {
-  const result = await Peep.findOneAndDelete({
-    _id: req.params.peepId,
-    userId: req.session.user._id,
-  });
-  const status = !result ? 403 : 204;
-  res.sendStatus(status);
+  try {
+    const result = await Peep.findOneAndDelete({
+      _id: req.params.peepId,
+      userId: req.session.user._id,
+    });
+    const status = !result ? 403 : 204;
+    res.sendStatus(status);
+  } catch {
+    res.sendStatus(404);
+  }
 };

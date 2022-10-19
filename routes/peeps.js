@@ -6,5 +6,6 @@ const authenticateUser = require("../public/javascripts/authenticateUser");
 router.get("/", peepsController.index);
 router.post("/", authenticateUser, peepsController.create);
 router.get("/:peepId", peepsController.show);
+router.delete("/:peepId", peepsController.destroy);
 
 module.exports = router;

@@ -168,6 +168,8 @@ describe("App", () => {
       .send({ peep: { body: "hello world" } });
     expect(result.status).toBe(201);
     expect(result.body.body).toBe("hello world");
+    const peeps = await Peep.find();
+    expect(peeps.length).toBe(1);
   });
 
   it("POST /peeps will return a 403 status if trying to create a peep when not logged in", async () => {
@@ -175,5 +177,32 @@ describe("App", () => {
       .post("/peeps")
       .send({ peep: { body: "hello world" } })
       .expect(403);
+  });
+
+  it("DELETE /peeps/:peepId will return a 204 status and delete the peep", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const peepRequest = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello world" } });
+    await session.delete(`/peeps/${peepRequest.body._id}`).expect(204);
+    const result = await Peep.find();
+    expect(result.length).toBe(0);
+  });
+
+  it("DELETE /peeps/:peepId will return a 404 status if the peep doesn't exist", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.delete("/peeps/1").expect(404);
   });
 });
