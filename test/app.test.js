@@ -100,6 +100,10 @@ describe("App", () => {
     await session.delete("/session").expect(204);
   });
 
+  it.only("DELETE /session will return status 403 if user is not logged in", async () => {
+    await supertest(app).delete("/session").expect(403);
+  });
+
   it("GET /peeps will return 200 status and peeps in reverse chronolocial order", async () => {
     const mockUserId = new mongoose.Types.ObjectId();
     await new Peep({
