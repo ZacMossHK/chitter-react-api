@@ -205,4 +205,21 @@ describe("App", () => {
       .send({ session: { username: "foo", password: "bar" } });
     await session.delete("/peeps/1").expect(404);
   });
+
+  it("DELETE /peeps/:peepId will return a 403 status if the logged in user doesn't have permission to delete the peep", async () => {
+    const mockUserId = new mongoose.Types.ObjectId();
+    const peep = await new Peep({
+      userId: mockUserId,
+      body: "foobar",
+      createdAt: new Date(2022, 10, 13),
+    }).save();
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.delete(`/peeps/${peep._id}`).expect(403);
+  });
 });
