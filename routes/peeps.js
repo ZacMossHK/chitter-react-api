@@ -9,6 +9,6 @@ router.post("/", authenticateUser, peepsController.create);
 router.get("/:peepId", peepsController.show);
 router.delete("/:peepId", authenticateUser, peepsController.destroy);
 router.put("/:peepId/likes", authenticateUser, likesController.update);
-router.delete("/:peepId/likes", likesController.destroy);
+router.delete("/:peepId/likes", authenticateUser, likesController.destroy);
 
 module.exports = router;

@@ -316,4 +316,8 @@ describe("App", () => {
     await session.post("/peeps").send({ peep: { body: "hello world" } });
     await session.delete(`/peeps/1/likes`).expect(404);
   });
+
+  it("DELETE /peeps/:peepId/likes will return a 403 status if a user isn't logged in", async () => {
+    await supertest(app).delete(`/peeps/1/likes`).expect(403);
+  });
 });
