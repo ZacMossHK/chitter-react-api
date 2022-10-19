@@ -255,4 +255,16 @@ describe("App", () => {
     const resultPeeps = await Peep.find();
     expect(resultPeeps[0].likes[0].toString()).toBe(like[0]._id.toString());
   });
+
+  it("PUT /peeps/:peepId/likes will return a 404 status if the peep isn't found", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.post("/peeps").send({ peep: { body: "hello world" } });
+    await session.put("/peeps/1/likes").expect(404);
+  });
 });
