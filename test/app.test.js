@@ -304,4 +304,16 @@ describe("App", () => {
       .send({ peep: { body: "hello world" } });
     await session.delete(`/peeps/${peepResponse.body._id}/likes`).expect(404);
   });
+
+  it("DELETE /peeps/:peepId/likes will return a 404 status if a peep doesn't exist", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    await session.post("/peeps").send({ peep: { body: "hello world" } });
+    await session.delete(`/peeps/1/likes`).expect(404);
+  });
 });
