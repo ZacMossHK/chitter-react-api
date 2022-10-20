@@ -5,11 +5,13 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const Peep = require("../models/peep");
 const Like = require("../models/like");
-const session = require("express-session");
-const { default: JSDOMEnvironment } = require("jest-environment-jsdom");
+const EmailLog = require("../models/emailLog");
+const sgMail = require("@sendgrid/mail");
+jest.mock("@sendgrid/mail");
 
 describe("App", () => {
   beforeEach((done) => {
+    sgMail.send.mockReset();
     mongoose.connect(
       "mongodb://0.0.0.0/chitter_test",
       { useNewUrlParser: true, useUnifiedTopology: true },
@@ -410,5 +412,28 @@ describe("App", () => {
 
   it("DELETE /peeps/:peepId/likes will return a 403 status if a user isn't logged in", async () => {
     await supertest(app).delete(`/peeps/1/likes`).expect(403);
+  });
+
+  // twilio
+
+  it("POST /peeps will create an EmailLog entry if an email is successfully send", async () => {
+    sgMail.send.mockImplementation();
+    const session = supertest(app);
+    const userResponse = await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const peepResponse = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello @foo!" } });
+    const emailLogs = await EmailLog.find();
+    console.log(emailLogs);
+    expect(emailLogs[0].userId.toString()).toBe(userResponse.body._id);
+    expect(emailLogs[0].peepId.toString()).toBe(peepResponse.body._id);
+    expect(emailLogs[0].createdAt).toBeTruthy();
+    expect(emailLogs[0].successful).toBe(true);
+    expect(emailLogs[0].errorMessage).toBeNull();
   });
 });
