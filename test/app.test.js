@@ -416,7 +416,7 @@ describe("App", () => {
 
   // twilio
 
-  it("POST /peeps will create an EmailLog entry if an email is successfully send", async () => {
+  it("POST /peeps will create a successful EmailLog entry if an email is successfully sent", async () => {
     sgMail.send.mockImplementation();
     const session = supertest(app);
     const userResponse = await session.post("/users").send({
@@ -435,5 +435,28 @@ describe("App", () => {
     expect(emailLogs[0].createdAt).toBeTruthy();
     expect(emailLogs[0].successful).toBe(true);
     expect(emailLogs[0].errorMessage).toBeNull();
+  });
+
+  it("POST /peeps will create an unsuccessful EmailLog entry if an email is unsuccessfully sent", async () => {
+    sgMail.send.mockImplementation(() => {
+      throw new Error("TwilioError");
+    });
+    const session = supertest(app);
+    const userResponse = await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const peepResponse = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello @foo!" } });
+    const emailLogs = await EmailLog.find();
+    console.log(emailLogs);
+    expect(emailLogs[0].userId.toString()).toBe(userResponse.body._id);
+    expect(emailLogs[0].peepId.toString()).toBe(peepResponse.body._id);
+    expect(emailLogs[0].createdAt).toBeTruthy();
+    expect(emailLogs[0].successful).toBe(false);
+    expect(emailLogs[0].errorMessage).toBe("Error: TwilioError");
   });
 });
