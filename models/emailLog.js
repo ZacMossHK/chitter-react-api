@@ -5,6 +5,7 @@ const EmailLogSchema = new mongoose.Schema({
   peepId: { type: mongoose.Schema.Types.ObjectId, ref: "Peep" },
   createdAt: Date,
   successful: Boolean,
+  errorMessage: String,
 });
 EmailLogSchema.index({ userId: 1, peepId: 1 }, { unique: true });
 const EmailLog = mongoose.model("EmailLog", EmailLogSchema);

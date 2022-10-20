@@ -17,6 +17,7 @@ describe("Like model", () => {
       userId: mockUserId,
       createdAt: new Date(2022, 10, 20),
       successful: true,
+      errorMessage: null,
     });
     expect(emailLog.peepId).toBe(mockPeepId);
     expect(emailLog.userId).toBe(mockUserId);
@@ -30,6 +31,7 @@ describe("Like model", () => {
       userId: mockUserId,
       createdAt: new Date(2022, 10, 20),
       successful: true,
+      errorMessage: null,
     }).save();
     expect(emailLog.peepId).toBe(mockPeepId);
     expect(emailLog.userId).toBe(mockUserId);
@@ -49,6 +51,7 @@ describe("Like model", () => {
       userId: mockUserId,
       createdAt: new Date(2022, 10, 20),
       successful: true,
+      errorMessage: null,
     }).save();
     try {
       await new EmailLog({
@@ -56,6 +59,7 @@ describe("Like model", () => {
         userId: mockUserId,
         createdAt: new Date(2022, 10, 20),
         successful: true,
+        errorMessage: null,
       }).save();
     } catch (result) {
       expect(result.toString()).toMatch(/MongoServerError/);
