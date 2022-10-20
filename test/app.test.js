@@ -23,6 +23,18 @@ describe("App", () => {
     });
   });
 
+  it("returns status 404 if a page doesn't exist", async () => {
+    await supertest(app).get("/foo").expect(404);
+    await supertest(app).post("/bar").expect(404);
+  });
+
+  it("returns status 403 if cookie user_sid doesn't match session.id", async () => {
+    await supertest(app)
+      .delete("/session")
+      .set("Cookie", ["user_sid=s=13l4j.1lkj34"])
+      .expect(403);
+  });
+
   it("POST /user creates a user with status 200", async () => {
     const result = await supertest(app)
       .post("/users")
