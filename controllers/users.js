@@ -14,14 +14,21 @@ exports.create = async (req, res) => {
 };
 
 const validateFields = (req, res) => {
-  let invalidUsernameObj, invalidEmailObj;
-  if (!req.body.user.username.match(/^[\p{L}\p{N}]*$/u))
-    invalidUsernameObj = { invalidCharsUsername: true };
-  const emailRegex =
-    /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  if (!req.body.user.email.match(emailRegex))
-    invalidEmailObj = { invalidCharsEmail: true };
+  const invalidUsernameObj = validateUsername(req);
+  const invalidEmailObj = validateEmail(req);
   if (invalidUsernameObj || invalidEmailObj)
     return res.status(400).json({ ...invalidUsernameObj, ...invalidEmailObj });
   return true;
+};
+
+const validateUsername = (req) => {
+  if (!req.body.user.username.match(/^[\p{L}\p{N}]*$/u))
+    return { invalidCharsUsername: true };
+};
+
+const validateEmail = (req) => {
+  const emailRegex =
+    /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  if (!req.body.user.email.match(emailRegex))
+    return { invalidCharsEmail: true };
 };
