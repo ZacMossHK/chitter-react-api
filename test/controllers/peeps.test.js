@@ -15,6 +15,8 @@ describe("Peeps controller", () => {
       sendStatus: jest.fn(),
     };
     Peep.mockReset();
+    User.mockReset();
+    sendTwilioEmail.mockReset();
   });
   it("gets the latest 50 peeps", async () => {
     const peeps = [
@@ -172,6 +174,149 @@ describe("Peeps controller", () => {
       username: "Foo",
       email: "example@example.com",
     });
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it("create returns 201 status and calls sendTwilioEmail if a username followed by special chars is in the peep body of a sentence", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "I can't wait to see @Foo!",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "I can't wait to see @Foo!" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne.mockResolvedValue({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    sendTwilioEmail.mockResolvedValue(true);
+    await peepsController.create(req, res);
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
+    expect(sendTwilioEmail).toHaveBeenCalledWith({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it("create returns 201 status and calls sendTwilioEmail if a username followed by special chars is in the peep body of a sentence", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "I can't wait to see @Foo!here",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "I can't wait to see @Foo!here" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne.mockResolvedValue({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    sendTwilioEmail.mockResolvedValue(true);
+    await peepsController.create(req, res);
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
+    expect(sendTwilioEmail).toHaveBeenCalledWith({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it("create returns 201 status and calls sendTwilioEmail if a there are multiple usernames in the peep body", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "I can't wait to see @Foo and @Bar again!",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "I can't wait to see @Foo and @Bar again!" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne
+      .mockResolvedValueOnce({
+        _id: 2,
+        username: "Foo",
+        email: "example@example.com",
+      })
+      .mockResolvedValueOnce({
+        _id: 3,
+        username: "Bar",
+        email: "example@example.com",
+      });
+    await peepsController.create(req, res);
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
+    expect(sendTwilioEmail.mock.calls[0][0]).toEqual({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    expect(sendTwilioEmail.mock.calls[1][0]).toEqual({
+      _id: 3,
+      username: "Bar",
+      email: "example@example.com",
+    });
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it.only("create returns 201 status and doesn't call sendTwilioEmail if a username doesn't exist", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "I can't wait to see @Foobar!",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "I can't wait to see @Foobar!" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne.mockImplementation(() => {
+      throw new Error("CastError");
+    });
+    await peepsController.create(req, res);
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foobar" });
+    expect(sendTwilioEmail).not.toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 });
