@@ -287,6 +287,21 @@ describe("App", () => {
     await session.put("/peeps/1/likes").expect(404);
   });
 
+  it("PUT /peeps/peepId/likes will return a 403 status if trying to make a Like that already exists", async () => {
+    const session = supertest(app);
+    await session.post("/users").send({
+      user: { username: "foo", email: "email@email.com", password: "bar" },
+    });
+    await session
+      .post("/session")
+      .send({ session: { username: "foo", password: "bar" } });
+    const peepResponse = await session
+      .post("/peeps")
+      .send({ peep: { body: "hello world" } });
+    await session.put(`/peeps/${peepResponse.body._id}/likes`).expect(201);
+    await session.put(`/peeps/${peepResponse.body._id}/likes`).expect(403);
+  });
+
   it("PUT /peeps/:peepId/likes will return a 403 status if a user isn't logged in", async () => {
     await supertest(app).put("/peeps/1/likes").expect(403);
   });
