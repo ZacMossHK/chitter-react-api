@@ -32,7 +32,7 @@ describe("sendTwilioEmail method", () => {
     expect(emailLogCall.successful).toBe(true);
   });
 
-  it("fails to send an email to a user if there is an issue with the email", async () => {
+  it("fails to send an email to a user if there is an issue with the email service", async () => {
     const taggedUser = { _id: 1, email: "email@email.com", username: "foo" };
     const peep = {
       _id: 1,
