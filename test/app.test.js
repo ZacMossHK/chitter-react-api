@@ -51,6 +51,51 @@ describe("App", () => {
     return;
   });
 
+  it("POST /users returns status 400 and an obj if username contains invalid characters", async () => {
+    const result = await supertest(app)
+      .post("/users")
+      .send({
+        user: {
+          username: "%%%^&&&foo",
+          email: "email@example.com",
+          password: "bar",
+        },
+      });
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({ invalidCharsUsername: true });
+  });
+
+  it("POST /users returns status 400 and an obj if email contains invalid characters", async () => {
+    const result = await supertest(app)
+      .post("/users")
+      .send({
+        user: {
+          username: "foo",
+          email: "ema%%%%%il@e^^^^mail.com",
+          password: "bar",
+        },
+      });
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({ invalidCharsEmail: true });
+  });
+
+  it("POST /users returns status 400 and an obj if email contains invalid characters", async () => {
+    const result = await supertest(app)
+      .post("/users")
+      .send({
+        user: {
+          username: "%%%^&&&foo",
+          email: "ema%%%%%il@e^^^^mail.com",
+          password: "bar",
+        },
+      });
+    expect(result.status).toBe(400);
+    expect(result.body).toEqual({
+      invalidCharsUsername: true,
+      invalidCharsEmail: true,
+    });
+  });
+
   it("POST /session logs in a user with status 201", async () => {
     const password = await bcrypt.hash("bar", 10);
     const user = await new User({
