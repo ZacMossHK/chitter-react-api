@@ -79,7 +79,7 @@ describe("App", () => {
     expect(result.body).toEqual({ invalidCharsEmail: true });
   });
 
-  it("POST /users returns status 400 and an obj if email contains invalid characters", async () => {
+  it("POST /users returns status 400 and an obj if username and email contains invalid characters", async () => {
     const result = await supertest(app)
       .post("/users")
       .send({
