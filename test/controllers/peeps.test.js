@@ -109,7 +109,7 @@ describe("Peeps controller", () => {
     const peep = {
       _id: 1,
       userId: 1,
-      body: "foo",
+      body: "@Foo",
       createdAt: new Date(2022, 10, 18),
       likes: [],
     };
@@ -122,6 +122,41 @@ describe("Peeps controller", () => {
     });
     const req = {
       body: { peep: { body: "@Foo" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne.mockResolvedValue({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    sendTwilioEmail.mockResolvedValue(true);
+    await peepsController.create(req, res);
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
+    expect(sendTwilioEmail).toHaveBeenCalledWith({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    expect(res.json).toHaveBeenCalledWith(peep);
+  });
+
+  it("create returns 201 status and calls sendTwilioEmail if a username followed by special chars is in the peep body", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "@Foo!",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "@Foo!" } },
       session: { user: { _id: 1 } },
     };
     User.findOne.mockResolvedValue({

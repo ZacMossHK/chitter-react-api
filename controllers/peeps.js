@@ -26,8 +26,12 @@ exports.create = async (req, res) => {
   const splitBody = req.body.peep.body.split(" ");
   for (let i = 0; i < splitBody.length; i++) {
     if (splitBody[i][0] === "@") {
+      const username = splitBody[i]
+        .slice(1)
+        .replace(/[^a-zA-Z0-9]/g, " ")
+        .split(" ")[0];
       const taggedUser = await User.findOne({
-        username: splitBody[i].slice(1),
+        username: username,
       });
       await sendTwilioEmail(taggedUser);
     }
