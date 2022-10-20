@@ -8,7 +8,11 @@ let res;
 
 describe("Likes controller", () => {
   beforeEach(() => {
-    res = { json: jest.fn(), sendStatus: jest.fn() };
+    res = {
+      json: jest.fn(),
+      sendStatus: jest.fn(),
+      status: jest.fn().mockReturnThis(),
+    };
     Like.mockReset();
     Peep.mockReset();
   });
@@ -32,7 +36,10 @@ describe("Likes controller", () => {
     Peep.findOneAndUpdate.mockReturnValueOnce({ _id: 1 });
     await likesController.update(req, res);
     expect(res.json).toHaveBeenCalledWith({
-      like: { _id: 1, userId: 1, peepId: 1, username: "foo" },
+      _id: 1,
+      userId: 1,
+      peepId: 1,
+      username: "foo",
     });
   });
 

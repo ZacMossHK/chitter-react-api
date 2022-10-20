@@ -9,8 +9,9 @@ exports.update = async (req, res) => {
       peepId: req.params.peepId,
       username: req.session.user.username,
     }).save();
-  } catch {
-    return res.sendStatus(404);
+  } catch (e) {
+    const errorStatus = e.toString().includes("MongoServerError") ? 403 : 404;
+    return res.sendStatus(errorStatus);
   }
   try {
     await Peep.findOneAndUpdate(
@@ -19,7 +20,6 @@ exports.update = async (req, res) => {
     );
     res.status(201).json(like);
   } catch (e) {
-    console.log(e);
     res.sendStatus(403);
   }
 };
