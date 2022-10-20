@@ -29,8 +29,8 @@ exports.destroy = async (req, res) => {
       { _id: req.params.peepId },
       { $pull: { likes: like._id } }
     );
-    res.sendStatus(204);
+    return res.sendStatus(204);
   } catch {
-    res.sendStatus(404);
+    return res.sendStatus(404);
   }
 };
