@@ -82,7 +82,7 @@ describe("Peeps controller", () => {
     });
     await peepsController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ peep: peep, taggedUsers: [] });
+    expect(res.json).toHaveBeenCalledWith(peep);
   });
 
   it("destroys a single peep", async () => {
@@ -105,7 +105,7 @@ describe("Peeps controller", () => {
     expect(res.sendStatus).toHaveBeenCalledWith(403);
   });
 
-  it("returns 201 status with an object containing the tagged users", async () => {
+  it("create returns 201 status and calls sendTwilioEmail if a username is in the peep body", async () => {
     const peep = {
       _id: 1,
       userId: 1,
@@ -131,9 +131,12 @@ describe("Peeps controller", () => {
     });
     sendTwilioEmail.mockResolvedValue(true);
     await peepsController.create(req, res);
-    expect(res.json).toHaveBeenCalledWith({
-      peep: peep,
-      taggedUsers: [{ id: 2, emailSuccess: true }],
+    expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
+    expect(sendTwilioEmail).toHaveBeenCalledWith({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
     });
+    expect(res.json).toHaveBeenCalledWith(peep);
   });
 });

@@ -23,21 +23,16 @@ exports.create = async (req, res) => {
     createdAt: Date.now(),
     likes: [],
   }).save();
-  let taggedUsers = [];
   const splitBody = req.body.peep.body.split(" ");
   for (let i = 0; i < splitBody.length; i++) {
     if (splitBody[i][0] === "@") {
       const taggedUser = await User.findOne({
         username: splitBody[i].slice(1),
       });
-      const emailSuccess = await sendTwilioEmail(taggedUser);
-      taggedUsers.push({ id: taggedUser._id, emailSuccess: emailSuccess });
+      await sendTwilioEmail(taggedUser);
     }
   }
-  return res.status(201).json({
-    peep: peep,
-    taggedUsers: taggedUsers,
-  });
+  return res.status(201).json(peep);
 };
 
 exports.destroy = async (req, res) => {
