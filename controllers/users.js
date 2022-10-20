@@ -6,9 +6,9 @@ exports.create = async (req, res) => {
     req.body.user.password = await bcrypt.hash(req.body.user.password, 10);
     try {
       const user = await new User(req.body.user).save();
-      res.status(201).json({ _id: user._id, username: user.username });
+      return res.status(201).json({ _id: user._id, username: user.username });
     } catch {
-      res.sendStatus(400);
+      return res.sendStatus(400);
     }
   }
 };
@@ -17,8 +17,8 @@ const validateFields = (req, res) => {
   const invalidUsernameObj = validateUsername(req);
   const invalidEmailObj = validateEmail(req);
   if (invalidUsernameObj || invalidEmailObj)
-    return res.status(400).json({ ...invalidUsernameObj, ...invalidEmailObj });
-  return true;
+    res.status(400).json({ ...invalidUsernameObj, ...invalidEmailObj });
+  return !(invalidUsernameObj || invalidEmailObj);
 };
 
 const validateUsername = (req) => {
