@@ -1,6 +1,10 @@
 import * as peepsController from "../../controllers/peeps";
 import Peep from "../../models/peep";
+import User from "../../models/user";
+import { sendTwilioEmail } from "../../public/javascripts/sendTwilioEmail";
 jest.mock("../../models/peep");
+jest.mock("../../models/user");
+jest.mock("../../public/javascripts/sendTwilioEmail");
 let res;
 
 describe("Peeps controller", () => {
@@ -73,9 +77,12 @@ describe("Peeps controller", () => {
       body: { peep: { body: "foo" } },
       session: { user: { _id: 1 } },
     };
+    User.findOne.mockResolvedValue(() => {
+      throw new Error("CastError");
+    });
     await peepsController.create(req, res);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(peep);
+    expect(res.json).toHaveBeenCalledWith({ peep: peep, taggedUsers: [] });
   });
 
   it("destroys a single peep", async () => {
@@ -96,5 +103,37 @@ describe("Peeps controller", () => {
     Peep.findOneAndDelete.mockResolvedValue(null);
     await peepsController.destroy(req, res);
     expect(res.sendStatus).toHaveBeenCalledWith(403);
+  });
+
+  it("returns 201 status with an object containing the tagged users", async () => {
+    const peep = {
+      _id: 1,
+      userId: 1,
+      body: "foo",
+      createdAt: new Date(2022, 10, 18),
+      likes: [],
+    };
+    Peep.mockImplementation(() => {
+      return {
+        save: jest.fn(() => {
+          return peep;
+        }),
+      };
+    });
+    const req = {
+      body: { peep: { body: "@Foo" } },
+      session: { user: { _id: 1 } },
+    };
+    User.findOne.mockResolvedValue({
+      _id: 2,
+      username: "Foo",
+      email: "example@example.com",
+    });
+    sendTwilioEmail.mockResolvedValue(true);
+    await peepsController.create(req, res);
+    expect(res.json).toHaveBeenCalledWith({
+      peep: peep,
+      taggedUsers: [{ id: 2, emailSuccess: true }],
+    });
   });
 });
