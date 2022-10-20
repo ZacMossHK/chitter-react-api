@@ -34,7 +34,6 @@ exports.create = async (req, res) => {
         const taggedUser = await User.findOne({
           username: username,
         });
-        console.log("hello");
         await sendTwilioEmail(taggedUser);
       } catch {}
     }

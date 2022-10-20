@@ -292,7 +292,7 @@ describe("Peeps controller", () => {
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
-  it.only("create returns 201 status and doesn't call sendTwilioEmail if a username doesn't exist", async () => {
+  it("create returns 201 status and doesn't call sendTwilioEmail if a username doesn't exist", async () => {
     const peep = {
       _id: 1,
       userId: 1,
