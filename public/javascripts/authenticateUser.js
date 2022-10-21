@@ -1,4 +1,4 @@
-authenticateUser = (req, res, next) => {
+const authenticateUser = (req, res, next) => {
   try {
     if (req.cookies.user_sid.split(".")[0].slice(2) === req.session.id)
       return next();
