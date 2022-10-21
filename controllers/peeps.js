@@ -1,6 +1,6 @@
-import Peep from "../models/peep";
-import User from "../models/user";
-import { sendTwilioEmail } from "../public/javascripts/sendTwilioEmail";
+const Peep = require("../models/peep");
+const User = require("../models/user");
+const sendTwilioEmail = require("../public/javascripts/sendTwilioEmail");
 
 exports.index = async (req, res) => {
   const peeps = await Peep.find().sort({ createdAt: -1 }).limit(50);
