@@ -1,5 +1,5 @@
 import EmailLog from "../../models/emailLog";
-const sgMail = require("@sendgrid/mail");
+import * as sgMail from "@sendgrid/mail";
 require("dotenv").config();
 
 exports.sendTwilioEmail = async (taggedUser, peep) => {
