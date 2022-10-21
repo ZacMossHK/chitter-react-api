@@ -20,7 +20,7 @@ exports.create = async (req, res) => {
   const peep = await new Peep({
     userId: req.session.user._id,
     body: req.body.peep.body,
-    createdAt: Date.now(),
+    createdAt: new Date(),
   }).save();
   const splitBody = req.body.peep.body.split(" ");
   for (let i = 0; i < splitBody.length; i++)
