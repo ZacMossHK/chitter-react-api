@@ -21,7 +21,6 @@ exports.create = async (req, res) => {
     userId: req.session.user._id,
     body: req.body.peep.body,
     createdAt: Date.now(),
-    likes: [],
   }).save();
   const splitBody = req.body.peep.body.split(" ");
   for (let i = 0; i < splitBody.length; i++)
@@ -35,23 +34,19 @@ const emailTaggedUser = async (splitBody, i, peep) => {
       .slice(1)
       .replace(/[^a-zA-Z0-9]/g, " ")
       .split(" ")[0];
-    const taggedUser = await User.findOne({
-      username: username,
-    });
+    const taggedUser = await User.findOne({ username });
     await sendTwilioEmail(taggedUser, peep);
   } catch {}
 };
 
 exports.destroy = async (req, res) => {
-  let status;
+  let status = 404;
   try {
     const result = await Peep.findOneAndDelete({
       _id: req.params.peepId,
       userId: req.session.user._id,
     });
     status = !result ? 403 : 204;
-  } catch {
-    status = 404;
-  }
+  } catch {}
   res.sendStatus(status);
 };
