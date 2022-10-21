@@ -4,15 +4,15 @@ import { sendTwilioEmail } from "../public/javascripts/sendTwilioEmail";
 
 exports.index = async (req, res) => {
   const peeps = await Peep.find().sort({ createdAt: -1 }).limit(50);
-  res.json(peeps);
+  return res.json(peeps);
 };
 
 exports.show = async (req, res) => {
   try {
     const peep = await Peep.findOne({ _id: req.params.peepId });
-    res.json(peep);
+    return res.json(peep);
   } catch {
-    res.sendStatus(404);
+    return res.sendStatus(404);
   }
 };
 
@@ -48,5 +48,5 @@ exports.destroy = async (req, res) => {
     });
     status = !result ? 403 : 204;
   } catch {}
-  res.sendStatus(status);
+  return res.sendStatus(status);
 };
