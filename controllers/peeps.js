@@ -25,11 +25,11 @@ exports.create = async (req, res) => {
   }).save();
   const splitBody = req.body.peep.body.split(" ");
   for (let i = 0; i < splitBody.length; i++)
-    if (splitBody[i][0] === "@") await emailTaggedUsers(splitBody, i, peep);
+    if (splitBody[i][0] === "@") await emailTaggedUser(splitBody, i, peep);
   return res.status(201).json(peep);
 };
 
-const emailTaggedUsers = async (splitBody, i, peep) => {
+const emailTaggedUser = async (splitBody, i, peep) => {
   try {
     const username = splitBody[i]
       .slice(1)
