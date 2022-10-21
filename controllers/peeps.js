@@ -24,26 +24,22 @@ exports.create = async (req, res) => {
     likes: [],
   }).save();
   const splitBody = req.body.peep.body.split(" ");
-  for (let i = 0; i < splitBody.length; i++) {
-    await emailTaggedUsers(splitBody, i, peep);
-  }
-
+  for (let i = 0; i < splitBody.length; i++)
+    if (splitBody[i][0] === "@") await emailTaggedUsers(splitBody, i, peep);
   return res.status(201).json(peep);
 };
 
 const emailTaggedUsers = async (splitBody, i, peep) => {
-  if (splitBody[i][0] === "@") {
-    try {
-      const username = splitBody[i]
-        .slice(1)
-        .replace(/[^a-zA-Z0-9]/g, " ")
-        .split(" ")[0];
-      const taggedUser = await User.findOne({
-        username: username,
-      });
-      await sendTwilioEmail(taggedUser, peep);
-    } catch {}
-  }
+  try {
+    const username = splitBody[i]
+      .slice(1)
+      .replace(/[^a-zA-Z0-9]/g, " ")
+      .split(" ")[0];
+    const taggedUser = await User.findOne({
+      username: username,
+    });
+    await sendTwilioEmail(taggedUser, peep);
+  } catch {}
 };
 
 exports.destroy = async (req, res) => {
