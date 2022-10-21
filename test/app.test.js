@@ -429,7 +429,6 @@ describe("App", () => {
       .post("/peeps")
       .send({ peep: { body: "hello @foo!" } });
     const emailLogs = await EmailLog.find();
-    console.log(emailLogs);
     expect(emailLogs[0].userId.toString()).toBe(userResponse.body._id);
     expect(emailLogs[0].peepId.toString()).toBe(peepResponse.body._id);
     expect(emailLogs[0].createdAt).toBeTruthy();
@@ -452,7 +451,6 @@ describe("App", () => {
       .post("/peeps")
       .send({ peep: { body: "hello @foo!" } });
     const emailLogs = await EmailLog.find();
-    console.log(emailLogs);
     expect(emailLogs[0].userId.toString()).toBe(userResponse.body._id);
     expect(emailLogs[0].peepId.toString()).toBe(peepResponse.body._id);
     expect(emailLogs[0].createdAt).toBeTruthy();
