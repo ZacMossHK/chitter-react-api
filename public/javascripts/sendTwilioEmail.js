@@ -3,23 +3,21 @@ const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
 exports.sendTwilioEmail = async (taggedUser, peep) => {
-  let successful = false;
   let errorMessage = null;
   try {
     await connectToTwilio(taggedUser, peep);
-    successful = true;
   } catch (e) {
     errorMessage = e.toString();
   }
-  await createEmailLog(taggedUser, peep, errorMessage, successful);
+  await createEmailLog(taggedUser, peep, errorMessage);
 };
 
-const createEmailLog = async (taggedUser, peep, errorMessage, successful) => {
+const createEmailLog = async (taggedUser, peep, errorMessage) => {
   await new EmailLog({
     userId: taggedUser._id,
     peepId: peep._id,
     createdAt: new Date(),
-    successful,
+    successful: !errorMessage,
     errorMessage,
   }).save();
 };
