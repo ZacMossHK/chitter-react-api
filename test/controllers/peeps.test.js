@@ -134,11 +134,7 @@ describe("Peeps controller", () => {
     sendTwilioEmail.mockResolvedValue(true);
     await peepsController.create(req, res);
     expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
-    expect(sendTwilioEmail).toHaveBeenCalledWith({
-      _id: 2,
-      username: "Foo",
-      email: "example@example.com",
-    });
+    expect(sendTwilioEmail).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
@@ -169,11 +165,7 @@ describe("Peeps controller", () => {
     sendTwilioEmail.mockResolvedValue(true);
     await peepsController.create(req, res);
     expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
-    expect(sendTwilioEmail).toHaveBeenCalledWith({
-      _id: 2,
-      username: "Foo",
-      email: "example@example.com",
-    });
+    expect(sendTwilioEmail).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
@@ -204,11 +196,7 @@ describe("Peeps controller", () => {
     sendTwilioEmail.mockResolvedValue(true);
     await peepsController.create(req, res);
     expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
-    expect(sendTwilioEmail).toHaveBeenCalledWith({
-      _id: 2,
-      username: "Foo",
-      email: "example@example.com",
-    });
+    expect(sendTwilioEmail).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 
@@ -239,11 +227,7 @@ describe("Peeps controller", () => {
     sendTwilioEmail.mockResolvedValue(true);
     await peepsController.create(req, res);
     expect(User.findOne).toHaveBeenCalledWith({ username: "Foo" });
-    expect(sendTwilioEmail).toHaveBeenCalledWith({
-      _id: 2,
-      username: "Foo",
-      email: "example@example.com",
-    });
+    expect(sendTwilioEmail).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith(peep);
   });
 

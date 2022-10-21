@@ -19,7 +19,6 @@ describe("sendTwilioEmail method", () => {
     };
     sgMail.send.mockResolvedValue();
     await sendTwilioEmail(taggedUser, peep);
-    console.log(EmailLog.mock.calls[0][0]);
     const sendMsg = sgMail.send.mock.calls[0][0];
     expect(sendMsg.from).toBe(taggedUser.email);
     expect(sendMsg.subject).toBe("You've been tagged in a Peep!");
@@ -43,7 +42,6 @@ describe("sendTwilioEmail method", () => {
       throw new Error("TwilioError");
     });
     await sendTwilioEmail(taggedUser, peep);
-    console.log(EmailLog.mock.calls[0][0]);
     const emailLogCall = EmailLog.mock.calls[0][0];
     expect(emailLogCall.peepId).toBe(1);
     expect(emailLogCall.userId).toBe(1);
