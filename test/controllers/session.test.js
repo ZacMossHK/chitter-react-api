@@ -18,58 +18,6 @@ describe("Session controller", () => {
     bcryptCompare.mockReset();
     User.mockReset();
   });
-  it("getUser returns an null value in the returned object when not logged in", () => {
-    sessionController.index({ session: {} }, res);
-    expect(res.sendStatus).toHaveBeenCalledWith(204);
-  });
-
-  it("index returns a user object if session exists", () => {
-    const req = {
-      session: {
-        user: {
-          _id: 0,
-          username: "someone",
-          email: "someoneelse",
-          password: "password",
-          peeps: [],
-        },
-      },
-    };
-    sessionController.index(req, res);
-    expect(res.json).toHaveBeenCalledWith({ _id: 0, username: "someone" });
-  });
-
-  it("index returns a user object if session user exists", () => {
-    const req = {
-      session: {
-        user: {
-          _id: 1,
-          username: "one",
-          email: "two",
-          password: "password",
-          peeps: [],
-        },
-      },
-    };
-    sessionController.index(req, res);
-    expect(res.json).toHaveBeenCalledWith({ _id: 1, username: "one" });
-  });
-
-  it("index returns a user object if session user exists", () => {
-    const req = {
-      session: {
-        user: {
-          _id: 2,
-          username: "red",
-          email: "blue",
-          password: "password",
-          peeps: [],
-        },
-      },
-    };
-    sessionController.index(req, res);
-    expect(res.json).toHaveBeenCalledWith({ _id: 2, username: "red" });
-  });
 
   it("create logs in if user exists and their password matches", async () => {
     const req = {
