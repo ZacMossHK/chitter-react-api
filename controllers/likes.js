@@ -1,5 +1,5 @@
-import Like from "../models/like";
-import Peep from "../models/peep";
+const Like = require("../models/like");
+const Peep = require("../models/peep");
 
 exports.update = async (req, res) => {
   try {
