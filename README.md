@@ -6,6 +6,18 @@ Users can create accounts, log in and out, make posts (called Peeps), like posts
 
 [Front-end Github.](https://github.com/ZacMossHK/chitter-react-client)
 
+## Tech
+
+Chitter's backend uses the following tech stack:
+
+- Javascript
+- Express
+- Node.js
+- MongoDB
+- BCrypt
+- Jest & Supertest
+- Twilio SendGrid
+
 ## Installation
 
 ```
