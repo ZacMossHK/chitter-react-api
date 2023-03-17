@@ -68,6 +68,7 @@ describe("User model", () => {
       expect(err).toBeNull();
 
       user2.save((err) => {
+        expect(err).toBeTruthy();
         expect(err.toString()).toMatch(/MongoServerError/);
         done();
       });
