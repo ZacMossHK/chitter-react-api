@@ -1,7 +1,7 @@
 import * as peepsController from "../../controllers/peeps";
 import Peep from "../../models/peep";
 import User from "../../models/user";
-import { sendTwilioEmail } from "../../public/javascripts/sendTwilioEmail";
+import sendTwilioEmail from "../../public/javascripts/sendTwilioEmail";
 jest.mock("../../models/peep");
 jest.mock("../../models/user");
 jest.mock("../../public/javascripts/sendTwilioEmail");
