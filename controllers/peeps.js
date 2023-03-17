@@ -1,6 +1,5 @@
 const Peep = require("../models/peep");
 const User = require("../models/user");
-// const sendTwilioEmail = require("../public/javascripts/sendTwilioEmail");
 import sendTwilioEmail from "../public/javascripts/sendTwilioEmail";
 
 exports.index = async (req, res) => {
