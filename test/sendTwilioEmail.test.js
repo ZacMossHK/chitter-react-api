@@ -1,4 +1,4 @@
-import { sendTwilioEmail } from "../public/javascripts/sendTwilioEmail";
+import sendTwilioEmail from "../public/javascripts/sendTwilioEmail";
 import EmailLog from "../models/emailLog";
 import * as sgMail from "@sendgrid/mail";
 jest.mock("../models/emailLog");
