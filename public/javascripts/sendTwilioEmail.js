@@ -2,7 +2,7 @@ const EmailLog = require("../../models/emailLog");
 const sgMail = require("@sendgrid/mail");
 require("dotenv").config();
 
-export default sendTwilioEmail = async (taggedUser, peep) => {
+const sendTwilioEmail = async (taggedUser, peep) => {
   let errorMessage = null;
   try {
     await connectToTwilio(taggedUser, peep);
@@ -32,3 +32,5 @@ const connectToTwilio = async (taggedUser, peep) => {
   };
   await sgMail.send(msg);
 };
+
+module.exports = sendTwilioEmail;
