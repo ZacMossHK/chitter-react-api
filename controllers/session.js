@@ -5,6 +5,7 @@ exports.create = async (req, res) => {
   try {
     return await createSession(req, res);
   } catch (e) {
+    console.log(e);
     return res.sendStatus(403);
   }
 };
